@@ -103,4 +103,4 @@ points, not solutions. See the README in each folder.
 * Evaluation: **33%** research-question formulation, **33%** scientific
   execution (no logical gaps), **33%** engineering solutions (results).
 
-Contact: Federico Corradi `f.corradi@tue.nl` · Ajeya Naithani `a.naithani@tue.nl`
+Contact: Federico Corradi `f.corradi@tue.nl` ·
