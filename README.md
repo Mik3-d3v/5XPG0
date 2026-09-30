@@ -95,7 +95,7 @@ points, not solutions. See the README in each folder.
 
 * **You may use AI tools for everything**, and group coding is allowed — but
   **you are responsible for the results, not the AI**.
-* Weekly meetings: **Monday 08:30–09:00** and **Thursday 13:30–14:00**
+* Weekly meetings: **Monday 09:00–10:00** and **Thursday 13:00–14:00**
   (both groups).
 * Deliverables: **report, code, presentation**.
 * **Code submission:** at the end of the project, push your code to this repo
