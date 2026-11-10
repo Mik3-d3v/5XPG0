@@ -7,3 +7,4 @@ torch
 torchvision
 snntorch
 numpy
+tensorboard

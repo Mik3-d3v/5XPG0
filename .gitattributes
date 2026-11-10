@@ -1,0 +1,11 @@
+# Force LF for everything that runs on (or is copied to) the PYNQ board or a
+# Linux toolchain; CRLF breaks scripts there ("/bin/bash^M: bad interpreter").
+*.sh     text eol=lf
+*.py     text eol=lf
+*.tcl    text eol=lf
+*.c      text eol=lf
+*.h      text eol=lf
+*.S      text eol=lf
+*.ld     text eol=lf
+Makefile text eol=lf
+*.bat    text eol=crlf

@@ -1,0 +1,49 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2026 Advanced Micro Devices, Inc. All Rights Reserved.
+---------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2026.1 (win64) Build 6511674 Tue Jun 16 11:02:23 MDT 2026
+| Date         : Wed Oct 14 16:13:38 2026
+| Host         : S-5CD4161DHP running 64-bit major release  (build 9200)
+| Command      : report_utilization -hierarchical -hierarchical_depth 6 -file util_hier.rpt
+| Design       : spike_top
+| Device       : xc7z020clg400-1
+| Speed File   : -1
+| Design State : Routed
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+Utilization Design Information
+
+Table of Contents
+-----------------
+1. Utilization by Hierarchy
+
+1. Utilization by Hierarchy
+---------------------------
+
++------------------------------------------------+-------------------------------------------------------------------+------------+------------+---------+------+------+--------+--------+------------+
+|                    Instance                    |                               Module                              | Total LUTs | Logic LUTs | LUTRAMs | SRLs |  FFs | RAMB36 | RAMB18 | DSP Blocks |
++------------------------------------------------+-------------------------------------------------------------------+------------+------------+---------+------+------+--------+--------+------------+
+| spike_top                                      |                                                             (top) |       4301 |       3716 |     525 |   60 | 3051 |     64 |      0 |          8 |
+|   (spike_top)                                  |                                                             (top) |          3 |          3 |       0 |    0 |    5 |      0 |      0 |          0 |
+|   u_bd                                         |                                                     ps_bd_wrapper |        431 |        371 |       0 |   60 |  512 |      0 |      0 |          0 |
+|     ps_bd_i                                    |                                                             ps_bd |        392 |        332 |       0 |   60 |  512 |      0 |      0 |          0 |
+|       pc0                                      |                                                       ps_bd_pc0_0 |        392 |        332 |       0 |   60 |  512 |      0 |      0 |          0 |
+|         inst                                   | ps_bd_pc0_0_axi_protocol_converter_v2_1_38_axi_protocol_converter |        392 |        332 |       0 |   60 |  512 |      0 |      0 |          0 |
+|           gen_axilite.gen_b2s_conv.axilite_b2s |                    ps_bd_pc0_0_axi_protocol_converter_v2_1_38_b2s |        392 |        332 |       0 |   60 |  512 |      0 |      0 |          0 |
+|             WR.aw_channel_0                    |         ps_bd_pc0_0_axi_protocol_converter_v2_1_38_b2s_aw_channel |         76 |         76 |       0 |    0 |   86 |      0 |      0 |          0 |
+|             RD.ar_channel_0                    |         ps_bd_pc0_0_axi_protocol_converter_v2_1_38_b2s_ar_channel |         65 |         65 |       0 |    0 |   82 |      0 |      0 |          0 |
+|             RD.r_channel_0                     |          ps_bd_pc0_0_axi_protocol_converter_v2_1_38_b2s_r_channel |         60 |         14 |       0 |   46 |   24 |      0 |      0 |          0 |
+|             SI_REG                             |         ps_bd_pc0_0_axi_register_slice_v2_1_37_axi_register_slice |        161 |        161 |       0 |    0 |  302 |      0 |      0 |          0 |
+|   u_ps_if                                      |                                                             ps_if |         90 |         90 |       0 |    0 |  250 |      0 |      0 |          0 |
+|   u_soc                                        |                                                         spike_soc |       3780 |       3255 |     525 |    0 | 2284 |     64 |      0 |          8 |
+|     (u_soc)                                    |                                                         spike_soc |         70 |         70 |       0 |    0 |  154 |     64 |      0 |          0 |
+|     u_cpu                                      |                                                          picorv32 |       1726 |       1682 |      44 |    0 |  803 |      0 |      0 |          4 |
+|       (u_cpu)                                  |                                                          picorv32 |       1121 |       1077 |      44 |    0 |  566 |      0 |      0 |          0 |
+|       pcpi_div                                 |                                                 picorv32_pcpi_div |        335 |        335 |       0 |    0 |  200 |      0 |      0 |          0 |
+|       pcpi_mul                                 |                                            picorv32_pcpi_fast_mul |        275 |        275 |       0 |    0 |   37 |      0 |      0 |          4 |
+|     u_mac                                      |                                                          mac_pcpi |        606 |        478 |     128 |    0 |  171 |      0 |      0 |          0 |
+|     u_poisson                                  |                                                           poisson |        474 |        474 |       0 |    0 |  817 |      0 |      0 |          2 |
+|     u_snn                                      |                                                          snn_pcpi |        913 |        560 |     353 |    0 |  339 |      0 |      0 |          2 |
++------------------------------------------------+-------------------------------------------------------------------+------------+------------+---------+------+------+--------+--------+------------+
+* Note: The sum of lower-level cells may be larger than their parent cells total, due to cross-hierarchy LUT combining
+
+

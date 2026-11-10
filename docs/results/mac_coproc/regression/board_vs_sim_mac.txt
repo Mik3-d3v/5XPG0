@@ -1,0 +1,20 @@
+Board runs of snn_mnist_mac.bin on spike_top_both.bit vs the RTL simulation (sim_rtl/*_mac.csv), same samples:
+
+ecg_ann_seed0_mac: 200 samples, identical cycles 200, identical outputs 200
+ecg_ann_seed1_mac: 200 samples, identical cycles 200, identical outputs 200
+ecg_ann_seed2_mac: 200 samples, identical cycles 200, identical outputs 200
+ecg_snn_seed0_mac: 200 samples, identical cycles 200, identical outputs 200
+ecg_snn_seed1_mac: 200 samples, identical cycles 200, identical outputs 200
+ecg_snn_seed2_mac: 200 samples, identical cycles 200, identical outputs 200
+mnist_ann_seed0_mac: 200 samples, identical cycles 200, identical outputs 200
+mnist_ann_seed1_mac: 200 samples, identical cycles 200, identical outputs 200
+mnist_snn_seed0_mac: 200 samples, identical cycles 200, identical outputs 200
+mnist_snn_seed1_mac: 200 samples, identical cycles 200, identical outputs 200
+stream_gru_seed0_mac: 10 samples, identical cycles 10, identical outputs 10
+stream_gru_seed1_mac: 10 samples, identical cycles 10, identical outputs 10
+stream_gru_seed2_mac: 10 samples, identical cycles 10, identical outputs 10
+stream_rsnn_seed0_mac: 200 samples, identical cycles 200, identical outputs 200
+stream_rsnn_seed1_mac: 200 samples, identical cycles 200, identical outputs 200
+stream_rsnn_seed2_mac: 200 samples, identical cycles 200, identical outputs 200
+
+total: 2630 samples, identical cycles 2630, identical outputs 2630

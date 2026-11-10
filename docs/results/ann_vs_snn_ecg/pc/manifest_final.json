@@ -1,0 +1,57 @@
+{
+  "log_dir": "runs\\tb\\20261002-121446_final",
+  "args": {
+    "epochs": 10,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "batch": 64,
+    "lr": 0.001,
+    "hidden": 64,
+    "timesteps": 10,
+    "beta": 0.9,
+    "encoding": "direct",
+    "use_rr": true,
+    "morph": "diff",
+    "augment": true,
+    "weight_decay": 0.2,
+    "cv_folds": 5,
+    "final": true,
+    "val_records": null,
+    "data_dir": "data",
+    "tag": "",
+    "threads": 4,
+    "models": [
+      "ANN",
+      "SNN"
+    ]
+  },
+  "runs": [
+    {
+      "log_dir": "runs\\tb\\20261002-121446_final\\ann_seed0",
+      "checkpoint": "runs\\ann_ecg_seed0.pt"
+    },
+    {
+      "log_dir": "runs\\tb\\20261002-121446_final\\snn_seed0",
+      "checkpoint": "runs\\snn_ecg_seed0.pt"
+    },
+    {
+      "log_dir": "runs\\tb\\20261002-121446_final\\ann_seed1",
+      "checkpoint": "runs\\ann_ecg_seed1.pt"
+    },
+    {
+      "log_dir": "runs\\tb\\20261002-121446_final\\snn_seed1",
+      "checkpoint": "runs\\snn_ecg_seed1.pt"
+    },
+    {
+      "log_dir": "runs\\tb\\20261002-121446_final\\ann_seed2",
+      "checkpoint": "runs\\ann_ecg_seed2.pt"
+    },
+    {
+      "log_dir": "runs\\tb\\20261002-121446_final\\snn_seed2",
+      "checkpoint": "runs\\snn_ecg_seed2.pt"
+    }
+  ]
+}

@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ANN vs SNN Live</title>
+<style>
+:root {
+  --bg: #0d1117; --panel: #161b22; --panel2: #1c232d; --line: #2b3440;
+  --text: #e6edf3; --muted: #8b98a8; --faint: #4a5563;
+  --ann: #4f8cff; --ann-soft: rgba(79,140,255,.16);
+  --snn: #ff8a3d; --snn-soft: rgba(255,138,61,.16);
+  --good: #3fb950; --bad: #f85149; --ink: #ffffff; --paper: #000000;
+  --radius: 14px;
+}
+:root[data-theme="light"] {
+  --bg: #f4f6f9; --panel: #ffffff; --panel2: #f0f3f7; --line: #dbe1e8;
+  --text: #121821; --muted: #5b6776; --faint: #b7c0cb;
+  --ann: #1f63e0; --ann-soft: rgba(31,99,224,.10);
+  --snn: #e0640f; --snn-soft: rgba(224,100,15,.10);
+  --good: #1a7f37; --bad: #cf222e;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  background: var(--bg); color: var(--text);
+  font: 15px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  display: flex; flex-direction: column;
+}
+header {
+  display: flex; align-items: center; gap: 18px; padding: 14px 24px;
+  border-bottom: 1px solid var(--line);
+}
+header h1 { font-size: 20px; margin: 0; font-weight: 650; letter-spacing: -.01em; }
+header h1 span { color: var(--muted); font-weight: 450; }
+.spacer { flex: 1; }
+.pill {
+  display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px;
+  border-radius: 999px; background: var(--panel); border: 1px solid var(--line);
+  font-size: 13px; color: var(--muted); white-space: nowrap;
+}
+.dot { width: 9px; height: 9px; border-radius: 50%; background: var(--faint); }
+.dot.on { background: var(--good); box-shadow: 0 0 0 4px rgba(63,185,80,.18); }
+.dot.off { background: var(--bad); }
+.dot.wait { background: #d29922; animation: blink 1s infinite; }
+@keyframes blink { 50% { opacity: .3; } }
+.seg { display: inline-flex; background: var(--panel); border: 1px solid var(--line);
+  border-radius: 10px; padding: 3px; gap: 3px; }
+.seg button {
+  border: 0; background: transparent; color: var(--muted); font: inherit; font-size: 13px;
+  padding: 6px 12px; border-radius: 7px; cursor: pointer;
+}
+.seg button.on { background: var(--snn-soft); color: var(--snn); font-weight: 600; }
+.iconbtn { border: 1px solid var(--line); background: var(--panel); color: var(--muted);
+  border-radius: 10px; padding: 6px 10px; cursor: pointer; font: inherit; font-size: 13px; }
+
+main {
+  flex: 1; display: grid; gap: 18px; padding: 18px 24px 22px; min-height: 0;
+  grid-template-columns: minmax(300px, 360px) 1fr 1fr;
+  grid-template-rows: 1fr auto;
+}
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 16px 18px; min-width: 0; }
+.label { font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted);
+  font-weight: 600; }
+
+/* --- input column --- */
+#inputCol { grid-row: 1 / span 2; display: flex; flex-direction: column; gap: 14px; }
+.canvasWrap { position: relative; aspect-ratio: 1; width: 100%; border-radius: 12px;
+  overflow: hidden; background: #000; border: 1px solid var(--line); touch-action: none; }
+#pad { width: 100%; height: 100%; display: block; cursor: crosshair; }
+#hint { position: absolute; inset: 0; display: grid; place-items: center; color: #5b6776;
+  font-size: 17px; pointer-events: none; transition: opacity .2s; }
+.row { display: flex; gap: 10px; align-items: center; }
+.btn { flex: 1; border: 1px solid var(--line); background: var(--panel2); color: var(--text);
+  border-radius: 10px; padding: 10px; font: inherit; font-weight: 600; cursor: pointer; }
+.btn:hover { border-color: var(--muted); }
+.sees { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.sees canvas { width: 100%; aspect-ratio: 1; image-rendering: pixelated; border-radius: 8px;
+  background: #000; border: 1px solid var(--line); display: block; }
+.sees .cap { font-size: 12px; color: var(--muted); margin-top: 6px; }
+.sees .cap b { color: var(--text); font-weight: 600; }
+.small { font-size: 12px; color: var(--muted); }
+
+/* --- model cards --- */
+.card { display: flex; flex-direction: column; gap: 14px; border-top: 4px solid var(--c); }
+.card.ann { --c: var(--ann); --soft: var(--ann-soft); }
+.card.snn { --c: var(--snn); --soft: var(--snn-soft); }
+.cardHead { display: flex; align-items: baseline; gap: 10px; }
+.cardHead h2 { margin: 0; font-size: 22px; color: var(--c); letter-spacing: -.01em; }
+.cardHead .sub { color: var(--muted); font-size: 13px; }
+.top { display: grid; grid-template-columns: 120px 1fr; gap: 18px; align-items: center; }
+.digit { font-size: 108px; line-height: 1; font-weight: 700; text-align: center;
+  color: var(--c); font-variant-numeric: tabular-nums; border-radius: 14px;
+  background: var(--soft); padding: 8px 0 10px; transition: transform .15s; }
+.digit.pop { transform: scale(1.06); }
+.bars { display: grid; gap: 4px; }
+.bar { display: grid; grid-template-columns: 14px 1fr 46px; gap: 8px; align-items: center;
+  font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.bar .track { height: 12px; background: var(--panel2); border-radius: 6px; overflow: hidden; }
+.bar .fill { height: 100%; width: 0; background: var(--faint); border-radius: 6px;
+  transition: width .35s ease; }
+.bar.win { color: var(--text); font-weight: 650; }
+.bar.win .fill { background: var(--c); }
+.metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.metric { background: var(--panel2); border-radius: 10px; padding: 10px 12px; min-width: 0; }
+.metric .v { font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums;
+  letter-spacing: -.02em; white-space: nowrap; }
+.metric .v small { font-size: 14px; font-weight: 500; color: var(--muted); margin-left: 3px; }
+.metric .k { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.metric.hero .v { color: var(--c); }
+.work { font-size: 13px; color: var(--muted); line-height: 1.55; }
+.work b { color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
+.badge { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600;
+  padding: 4px 10px; border-radius: 999px; background: var(--panel2); color: var(--muted); }
+.badge.ok { color: var(--good); background: rgba(63,185,80,.12); }
+.badge.bad { color: var(--bad); background: rgba(248,81,73,.12); }
+
+/* --- bottom row --- */
+#bottom { grid-column: 2 / span 2; display: grid; grid-template-columns: 1fr 1.25fr; gap: 18px; }
+.race { display: grid; gap: 12px; margin-top: 12px; }
+.lane { display: grid; grid-template-columns: 44px 1fr 92px; gap: 10px; align-items: center; }
+.lane .name { font-weight: 700; font-size: 14px; }
+.lane .track { height: 26px; background: var(--panel2); border-radius: 8px; overflow: hidden; }
+.lane .fill { height: 100%; width: 0; border-radius: 8px; transition: width .5s ease; }
+.lane .t { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; }
+#verdict { margin-top: 12px; font-size: 18px; font-weight: 650; }
+#verdict .ann { color: var(--ann); } #verdict .snn { color: var(--snn); }
+#raster { width: 100%; height: 200px; display: block; margin-top: 8px; }
+.digit.empty { color: var(--faint); }
+.history { display: flex; gap: 8px; margin-top: 10px; overflow: hidden; }
+.hitem { flex: 0 0 auto; width: 74px; background: var(--panel2); border-radius: 8px; padding: 6px;
+  font-size: 11px; color: var(--muted); text-align: center; font-variant-numeric: tabular-nums; }
+.hitem canvas { width: 40px; height: 40px; image-rendering: pixelated; display: block;
+  margin: 0 auto 4px; border-radius: 4px; background: #000; }
+.hitem .p { font-weight: 700; font-size: 13px; }
+.hitem .p .a { color: var(--ann); } .hitem .p .s { color: var(--snn); }
+.err { color: var(--bad); font-size: 13px; }
+@media (max-width: 1100px) {
+  main { grid-template-columns: 1fr; grid-template-rows: auto; }
+  #inputCol, #bottom { grid-column: auto; grid-row: auto; }
+  #bottom { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>ANN vs SNN <span>· live on a PicoRV32 RISC-V core (PYNQ-Z2)</span></h1>
+  <div class="spacer"></div>
+  <span class="pill"><span id="boardDot" class="dot"></span><span id="boardTxt">connecting…</span></span>
+  <button class="iconbtn" id="reconBtn" style="display:none" title="restart the board-side server">Reconnect</button>
+  <span class="small">SNN runs on</span>
+  <div class="seg" id="fwSeg">
+    <button data-fw="fast" class="on" title="key 1">Software</button>
+    <button data-fw="hw" title="key 2">Custom instructions</button>
+  </div>
+  <button class="iconbtn" id="themeBtn" title="toggle light / dark">◐</button>
+</header>
+
+<main>
+  <section id="inputCol" class="panel">
+    <div class="label">Draw a digit</div>
+    <div class="canvasWrap"><canvas id="pad" width="280" height="280"></canvas>
+      <div id="hint">draw here</div></div>
+    <div class="row">
+      <button class="btn" id="clearBtn">Clear <span class="small">(C)</span></button>
+    </div>
+    <div class="label" style="margin-top:4px">What the networks see</div>
+    <div class="sees">
+      <div><canvas id="annIn" width="28" height="28"></canvas>
+        <div class="cap"><b style="color:var(--ann)">ANN</b> 28×28 pixels, one pass</div></div>
+      <div><canvas id="snnIn" width="28" height="28"></canvas>
+        <div class="cap"><b style="color:var(--snn)">SNN</b> spikes, step <b id="stepTxt">–</b> of <b id="tTxt">25</b></div></div>
+    </div>
+    <div class="small" id="rtTxt" style="margin-top:auto">Each stroke is sent to the FPGA; the board runs the ANN, then the SNN, and both are checked against the PC int8 model.</div>
+  </section>
+
+  <section class="panel card ann" id="annCard">
+    <div class="cardHead"><h2>ANN</h2><span class="sub">784-128-10 · int8 · ReLU</span>
+      <span class="spacer"></span><span class="badge" id="annBadge">–</span></div>
+    <div class="top"><div class="digit empty" id="annDigit">–</div><div class="bars" id="annBars"></div></div>
+    <div class="metrics">
+      <div class="metric hero"><div class="v" id="annMs">–</div><div class="k">latency on the board</div></div>
+      <div class="metric"><div class="v" id="annCyc">–</div><div class="k">clock cycles</div></div>
+      <div class="metric"><div class="v" id="annE">–</div><div class="k">≈ energy (est.)</div></div>
+    </div>
+    <div class="work" id="annWork">&nbsp;</div>
+  </section>
+
+  <section class="panel card snn" id="snnCard">
+    <div class="cardHead"><h2>SNN</h2><span class="sub">784-128-10 · LIF · T = 25</span>
+      <span class="spacer"></span><span class="badge" id="snnBadge">–</span></div>
+    <div class="top"><div class="digit empty" id="snnDigit">–</div><div class="bars" id="snnBars"></div></div>
+    <div class="metrics">
+      <div class="metric hero"><div class="v" id="snnMs">–</div><div class="k">latency on the board</div></div>
+      <div class="metric"><div class="v" id="snnCyc">–</div><div class="k">clock cycles</div></div>
+      <div class="metric"><div class="v" id="snnE">–</div><div class="k">≈ energy (est.)</div></div>
+    </div>
+    <div class="work" id="snnWork">&nbsp;</div>
+  </section>
+
+  <section id="bottom">
+    <div class="panel">
+      <div class="label">Latency race · same digit, same core, 100 MHz</div>
+      <div class="race">
+        <div class="lane"><span class="name" style="color:var(--ann)">ANN</span>
+          <div class="track"><div class="fill" id="annLane" style="background:var(--ann)"></div></div>
+          <span class="t" id="annLaneT">–</span></div>
+        <div class="lane"><span class="name" style="color:var(--snn)">SNN</span>
+          <div class="track"><div class="fill" id="snnLane" style="background:var(--snn)"></div></div>
+          <span class="t" id="snnLaneT">–</span></div>
+      </div>
+      <div id="verdict">&nbsp;</div>
+      <div class="history" id="history"></div>
+    </div>
+    <div class="panel">
+      <div class="label">SNN output spikes over time (rows = digits, columns = timesteps)</div>
+      <canvas id="raster"></canvas>
+    </div>
+  </section>
+</main>
+
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+let snnFw = "fast", busy = false, pending = false, dirty = false, lastRep = null;
+let frameTimer = null, history = [];
+
+// ---------------------------------------------------------------- theme
+try { const t = localStorage.getItem("demoTheme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+$("themeBtn").onclick = () => {
+  const r = document.documentElement;
+  r.dataset.theme = r.dataset.theme === "light" ? "dark" : "light";
+  try { localStorage.setItem("demoTheme", r.dataset.theme); } catch (e) {}
+  if (lastRep) render(lastRep, false);
+};
+
+// ---------------------------------------------------------------- bars
+function makeBars(el) {
+  el.innerHTML = "";
+  for (let d = 0; d < 10; d++) {
+    el.insertAdjacentHTML("beforeend",
+      `<div class="bar"><span>${d}</span><div class="track"><div class="fill"></div></div><span class="val">–</span></div>`);
+  }
+}
+makeBars($("annBars")); makeBars($("snnBars"));
+function setBars(el, scores, labels, pred) {
+  const max = Math.max(...scores, 1e-9);
+  [...el.children].forEach((row, d) => {
+    row.classList.toggle("win", d === pred);
+    row.querySelector(".fill").style.width = (100 * scores[d] / max) + "%";
+    row.querySelector(".val").textContent = labels[d];
+  });
+}
+
+// ---------------------------------------------------------------- drawing
+const pad = $("pad"), ctx = pad.getContext("2d");
+function clearPad() {
+  ctx.fillStyle = "#000"; ctx.fillRect(0, 0, pad.width, pad.height);
+  $("hint").style.opacity = 1; dirty = false;
+}
+clearPad();
+ctx.lineCap = ctx.lineJoin = "round"; ctx.strokeStyle = "#fff"; ctx.lineWidth = 20;
+let drawing = false, last = null, lastSend = 0;
+function pos(e) {
+  const r = pad.getBoundingClientRect();
+  return [(e.clientX - r.left) * pad.width / r.width, (e.clientY - r.top) * pad.height / r.height];
+}
+pad.addEventListener("pointerdown", e => {
+  drawing = true; last = pos(e); pad.setPointerCapture(e.pointerId);
+  $("hint").style.opacity = 0;
+  ctx.beginPath(); ctx.arc(last[0], last[1], ctx.lineWidth / 2, 0, 7); ctx.fillStyle = "#fff"; ctx.fill();
+  dirty = true;
+});
+pad.addEventListener("pointermove", e => {
+  if (!drawing) return;
+  const p = pos(e);
+  ctx.beginPath(); ctx.moveTo(last[0], last[1]); ctx.lineTo(p[0], p[1]); ctx.stroke();
+  last = p; dirty = true;
+  if (performance.now() - lastSend > 450) send();       // live while drawing
+});
+const end = () => { if (drawing) { drawing = false; send(); } };
+pad.addEventListener("pointerup", end); pad.addEventListener("pointercancel", end);
+function clearAll() { if (lastRep && dirty) addHistory(lastRep); lastRep = null; clearPad(); resetView(); }
+$("clearBtn").onclick = clearAll;
+document.addEventListener("keydown", e => {
+  if (e.key === "c" || e.key === "C" || e.key === "Escape") clearAll();
+  if (e.key === "1") setFw("fast");
+  if (e.key === "2") setFw("hw");
+});
+
+// ---------------------------------------------------------------- firmware switch
+function setFw(fw) {
+  snnFw = fw;
+  document.querySelectorAll("#fwSeg button").forEach(b => b.classList.toggle("on", b.dataset.fw === fw));
+  if (dirty) send();
+}
+document.querySelectorAll("#fwSeg button").forEach(b => b.onclick = () => setFw(b.dataset.fw));
+
+// ---------------------------------------------------------------- requests
+async function send() {
+  if (!dirty) return;
+  if (busy) { pending = true; return; }
+  busy = true; pending = false; lastSend = performance.now();
+  try {
+    const r = await fetch("/api/infer", { method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ png: pad.toDataURL("image/png"), snn_fw: snnFw }) });
+    const rep = await r.json();
+    if (rep.error) throw new Error(rep.error);
+    render(rep, true);
+  } catch (e) {
+    $("rtTxt").innerHTML = `<span class="err">${e.message}</span>`;
+  } finally {
+    busy = false;
+    if (pending) send();
+  }
+}
+
+// ---------------------------------------------------------------- rendering
+const fmt = (x, d = 0) => x.toLocaleString("en-US", { maximumFractionDigits: d, minimumFractionDigits: d });
+function msText(ms) { return ms < 10 ? fmt(ms, 2) : fmt(ms, 1); }
+function drawPixels(c, px) {
+  const g = c.getContext("2d"), img = g.createImageData(28, 28);
+  for (let i = 0; i < 784; i++) { const v = px[i]; img.data.set([v, v, v, 255], 4 * i); }
+  g.putImageData(img, 0, 0);
+}
+function decodeFrames(b64, T) {
+  const raw = Uint8Array.from(atob(b64), ch => ch.charCodeAt(0)), per = raw.length / T, fr = [];
+  for (let t = 0; t < T; t++) {
+    const f = new Uint8Array(784);
+    for (let i = 0; i < 784; i++) f[i] = (raw[t * per + (i >> 3)] >> (i & 7)) & 1;
+    fr.push(f);
+  }
+  return fr;
+}
+function animateFrames(frames) {
+  clearInterval(frameTimer);
+  const c = $("snnIn"), g = c.getContext("2d"), col = css("--snn");
+  const rgb = col.startsWith("#") ? [1, 3, 5].map(i => parseInt(col.slice(i, i + 2), 16)) : [255, 138, 61];
+  let t = 0;
+  const step = () => {
+    const img = g.createImageData(28, 28), f = frames[t];
+    for (let i = 0; i < 784; i++) img.data.set(f[i] ? [...rgb, 255] : [0, 0, 0, 255], 4 * i);
+    g.putImageData(img, 0, 0);
+    $("stepTxt").textContent = t + 1;
+    t = (t + 1) % frames.length;
+  };
+  step(); frameTimer = setInterval(step, 140);
+}
+function badge(el, m) {
+  if (!m.board) { el.className = "badge"; el.textContent = "PC int8 only"; return; }
+  el.className = "badge " + (m.bit_exact ? "ok" : "bad");
+  el.textContent = m.bit_exact ? "✓ board = PC int8" : "✗ board ≠ PC int8";
+}
+function drawRaster(snn) {
+  const c = $("raster"), dpr = window.devicePixelRatio || 1;
+  c.width = c.clientWidth * dpr; c.height = c.clientHeight * dpr;
+  const g = c.getContext("2d"); g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const W = c.clientWidth, H = c.clientHeight;
+  g.clearRect(0, 0, W, H);
+  const T = snn.T, left = 58, top = 4, bottomH = 34, cw = (W - left - 6) / T,
+        ch = (H - top - bottomH - 10) / 10;
+  const snnC = css("--snn"), faint = css("--line"), muted = css("--muted"), text = css("--text");
+  g.font = "12px system-ui"; g.textBaseline = "middle"; g.textAlign = "right";
+  g.fillStyle = muted; g.fillText("digit", left - 26, top + ch / 2);
+  for (let d = 0; d < 10; d++) {
+    const y = top + d * ch;
+    g.fillStyle = d === snn.pred ? text : muted;
+    g.fillText(d, left - 8, y + ch / 2);
+    for (let t = 0; t < T; t++) {
+      g.fillStyle = snn.raster[t][d] ? snnC : faint;
+      g.globalAlpha = snn.raster[t][d] ? 1 : (d === snn.pred ? .7 : .45);
+      const r = Math.min(cw, ch) * .38;
+      g.beginPath(); g.arc(left + t * cw + cw / 2, y + ch / 2, snn.raster[t][d] ? r : r * .45, 0, 7); g.fill();
+    }
+    g.globalAlpha = 1;
+  }
+  // hidden spikes per step
+  const hmax = Math.max(...snn.hidden_per_step, 1), base = H - 4;
+  for (let t = 0; t < T; t++) {
+    const h = (bottomH - 6) * snn.hidden_per_step[t] / hmax;
+    g.fillStyle = snnC; g.globalAlpha = .45;
+    g.fillRect(left + t * cw + cw * .2, base - h, cw * .6, h);
+  }
+  g.globalAlpha = 1; g.textAlign = "right"; g.fillStyle = muted;
+  g.fillText("hidden", left - 8, base - (bottomH - 6) / 2);
+}
+function resetView() {
+  clearInterval(frameTimer);
+  for (const k of ["ann", "snn"]) {
+    $(k + "Digit").textContent = "–"; $(k + "Digit").classList.add("empty");
+    setBars($(k + "Bars"), Array(10).fill(0), Array(10).fill("–"), -1);
+    ["Ms", "Cyc", "E"].forEach(s => $(k + s).innerHTML = "–");
+    $(k + "Work").innerHTML = "&nbsp;"; $(k + "Badge").textContent = "–"; $(k + "Badge").className = "badge";
+    $(k + "Lane").style.width = 0; $(k + "LaneT").textContent = "–";
+  }
+  $("verdict").innerHTML = "&nbsp;";
+  { const c = $("raster"); c.getContext("2d").clearRect(0, 0, c.width, c.height); }
+  ["annIn", "snnIn"].forEach(id => { const g = $(id).getContext("2d"); g.fillStyle = "#000"; g.fillRect(0, 0, 28, 28); });
+  $("stepTxt").textContent = "–";
+}
+function render(rep, fresh) {
+  lastRep = rep;
+  const { ann, snn } = rep;
+  drawPixels($("annIn"), rep.pixels);
+  if (fresh) animateFrames(decodeFrames(rep.frames, snn.T));
+  $("tTxt").textContent = snn.T;
+  for (const [k, m] of [["ann", ann], ["snn", snn]]) {
+    const el = $(k + "Digit");
+    if (el.textContent !== String(m.pred)) { el.classList.add("pop"); setTimeout(() => el.classList.remove("pop"), 160); }
+    el.textContent = m.pred; el.classList.remove("empty");
+    badge($(k + "Badge"), m);
+    if (m.board) {
+      $(k + "Ms").innerHTML = `${msText(m.ms)}<small>ms</small>`;
+      $(k + "Cyc").innerHTML = (m.cycles / 1e6).toFixed(2) + "<small>M</small>";
+      $(k + "E").innerHTML = `${fmt(m.energy_uj / 1000, 1)}<small>mJ</small>`;
+    } else {
+      ["Ms", "Cyc", "E"].forEach(s => $(k + s).innerHTML = "<small>no board</small>");
+    }
+  }
+  setBars($("annBars"), ann.scores, ann.scores.map(p => (100 * p).toFixed(0) + "%"), ann.pred);
+  setBars($("snnBars"), snn.counts, snn.counts.map(String), snn.pred);
+  $("annWork").innerHTML =
+    `<b>${ann.nonzero_pixels}</b> of 784 pixels are ink → only those rows are multiplied: ` +
+    `<b>${fmt(ann.macs_executed)}</b> MACs instead of ${fmt(ann.macs_dense)} · ` +
+    `<b>${ann.nonzero_hidden}</b> of 128 hidden units active`;
+  $("snnWork").innerHTML =
+    `<b>${fmt(snn.input_spikes)}</b> input spikes over ${snn.T} steps (<b>${fmt(snn.input_changes)}</b> on/off changes) · ` +
+    `<b>${fmt(snn.hidden_spikes)}</b> hidden, <b>${snn.output_spikes}</b> output spikes · ` +
+    `${snn.fw === "hw" ? "<b style='color:var(--snn)'>neuron updates in the custom coprocessor</b>" : "everything in software"}`;
+  // race + verdict
+  if (ann.board && snn.board) {
+    const mx = Math.max(ann.ms, snn.ms);
+    $("annLane").style.width = (100 * ann.ms / mx) + "%"; $("snnLane").style.width = (100 * snn.ms / mx) + "%";
+    $("annLaneT").textContent = msText(ann.ms) + " ms"; $("snnLaneT").textContent = msText(snn.ms) + " ms";
+    const r = snn.ms / ann.ms;
+    $("verdict").innerHTML = r >= 1
+      ? `<span class="ann">ANN</span> is ${r.toFixed(1)}× faster on this digit`
+      : `<span class="snn">SNN</span> is ${(1 / r).toFixed(1)}× faster on this digit`;
+  } else {
+    $("verdict").innerHTML = `<span class="small">latency needs the board (${rep.status.reason || "not connected"})</span>`;
+  }
+  drawRaster(snn);
+  $("rtTxt").textContent = `Round trip ${fmt(rep.roundtrip_ms)} ms (board: ANN + SNN, model swaps ${fmt((ann.switch_ms || 0) + (snn.switch_ms || 0))} ms, encoding, PC check).`;
+}
+function addHistory(rep) {
+  if (history.length && history[0].id === rep.id) return;
+  history.unshift(rep); history = history.slice(0, 8);
+  const h = $("history"); h.innerHTML = "";
+  for (const r of history) {
+    const it = document.createElement("div"); it.className = "hitem";
+    const c = document.createElement("canvas"); c.width = c.height = 28; drawPixels(c, r.pixels);
+    it.appendChild(c);
+    it.insertAdjacentHTML("beforeend",
+      `<div class="p"><span class="a">${r.ann.pred}</span> · <span class="s">${r.snn.pred}</span></div>` +
+      (r.ann.board ? `<div>${msText(r.ann.ms)} / ${msText(r.snn.ms)}</div>` : ""));
+    h.appendChild(it);
+  }
+}
+
+// ---------------------------------------------------------------- status
+async function status() {
+  try {
+    const s = await (await fetch("/api/status")).json();
+    $("boardDot").className = "dot " + (s.board ? "on" : s.reconnecting ? "wait" : "off");
+    $("boardTxt").textContent = s.board ? "FPGA connected · " + s.bit
+      : s.reconnecting ? "FPGA reconnecting… (board booting / loading bitstream)"
+      : "FPGA not connected — PC int8 only";
+    $("reconBtn").style.display = s.board || s.reason === "offline mode" ? "none" : "";
+    $("tTxt").textContent = s.T;
+    const hasHw = s.board && s.firmware && s.firmware.includes("hw") && s.bit.includes("snn");
+    $("fwSeg").querySelector('[data-fw="hw"]').disabled = !hasHw;
+    $("fwSeg").querySelector('[data-fw="hw"]').title = hasHw ? "key 2" : "needs spike_top_snn.bit";
+  } catch (e) {
+    $("boardDot").className = "dot off"; $("boardTxt").textContent = "demo server not reachable";
+  }
+}
+$("reconBtn").onclick = async () => {
+  $("reconBtn").disabled = true;
+  $("boardDot").className = "dot wait"; $("boardTxt").textContent = "FPGA reconnecting…";
+  try { await fetch("/api/reconnect", { method: "POST" }); } catch (e) {}
+  $("reconBtn").disabled = false;
+  status();
+};
+status(); setInterval(status, 3000);
+resetView();
+</script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+MIT License
+
+Copyright (c) 2026 5XPG0 Group 4, TU Eindhoven (Maria Mihai, Michael Scholl,
+Roko Ćubela, Jan Lemieszka, Mikolaj Lapinski, Hugo Blankestijn)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+-------------------------------------------------------------------------------
+Scope
+
+This license covers the original work in this repository: code/ann_vs_snn_ecg/,
+code/ann_vs_snn_mnist/pynq/, code/ann_vs_snn_mnist/demo/, the changes to
+code/ann_vs_snn_mnist/ beyond the course skeleton, the overnight sweep
+scripts in code/, the SNN and MAC coprocessors in code/pynqz2_riscv_flow/
+(rtl/snn_pcpi.v, rtl/mac_pcpi.v, sim/, vivado/build_snn.tcl, build_mac.tcl,
+build_both.tcl, the SNN_COPROC / MAC_COPROC options in rtl/spike_soc.v and
+the build.tcl hooks), and docs/ (except docs/course/).
+
+It does NOT cover third-party or course material, which keeps its own terms:
+  * code/pynqz2_riscv_flow/rtl/picorv32.v  PicoRV32, (c) Claire Xenia Wolf,
+                                           ISC license (see the file header)
+  * code/pynqz2_riscv_flow/vivado/board_files/  PYNQ-Z2 board files, (c) TUL
+  * third_party/muriscv-nn/  muRISCV-NN (git submodule, unmodified),
+                             (c) TUM / Arm, Apache License 2.0 (see its LICENSE)
+  * the 5XPG0 course template (TU Eindhoven, F. Corradi): the rest of
+    code/pynqz2_riscv_flow/, code/snn_keyword/, the original skeletons of
+    code/ann_vs_snn_mnist/, PresentationInstruction/, ProjectPitch/ and
+    docs/course/. No license was granted for these; all rights remain with
+    their authors.
+  * Datasets are not included. MNIST and the MIT-BIH Arrhythmia Database
+    (PhysioNet, ODC-By 1.0) are downloaded by the scripts under their own terms.

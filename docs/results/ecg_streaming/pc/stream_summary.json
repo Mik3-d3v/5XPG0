@@ -1,0 +1,328 @@
+{
+  "train_args": {
+    "epochs": 20,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "batch": 256,
+    "lr": 0.003,
+    "hidden": 64,
+    "timesteps": 25,
+    "beta": 0.9,
+    "encoding": "direct",
+    "use_rr": true,
+    "morph": "diff",
+    "augment": true,
+    "weight_decay": 0.2,
+    "cv_folds": 5,
+    "final": true,
+    "val_records": null,
+    "data_dir": "data",
+    "manifest": "runs/manifest_stream_rsnn.json",
+    "tag": "",
+    "threads": 6,
+    "models": [
+      "RSNN"
+    ],
+    "delta_theta": 0.7,
+    "readout_bins": 3,
+    "delta_levels": 2
+  },
+  "classes": [
+    "N",
+    "S",
+    "V"
+  ],
+  "runs": [
+    {
+      "model": "GRU",
+      "seed": 0,
+      "test_accuracy": 0.9320723414421082,
+      "test_macro_f1": 0.6730813384056091,
+      "test_se_N": 0.9664164185523987,
+      "test_ppv_N": 0.9615237712860107,
+      "test_se_S": 0.19553376734256744,
+      "test_ppv_S": 0.3984461724758148,
+      "test_se_V": 0.880397617816925,
+      "test_ppv_V": 0.7213031053543091,
+      "test_loss": 0.2966811119827538,
+      "macs_per_sample": 1573065,
+      "sops_per_sample": 0.0,
+      "ops_per_sample": 1573065.0,
+      "val_accuracy": null,
+      "val_macro_f1": null,
+      "params": 13452,
+      "latency_ms_per_sample": 0.10064314999908675,
+      "train_time_s": 1579.8371913433075
+    },
+    {
+      "model": "GRU",
+      "seed": 1,
+      "test_accuracy": 0.9301645755767822,
+      "test_macro_f1": 0.6732237935066223,
+      "test_se_N": 0.9627526998519897,
+      "test_ppv_N": 0.9633409380912781,
+      "test_se_S": 0.20043572783470154,
+      "test_ppv_S": 0.3113367259502411,
+      "test_se_V": 0.8987262845039368,
+      "test_ppv_V": 0.7417948842048645,
+      "test_loss": 0.2968548337334487,
+      "macs_per_sample": 1573065,
+      "sops_per_sample": 0.0,
+      "ops_per_sample": 1573065.0,
+      "val_accuracy": null,
+      "val_macro_f1": null,
+      "params": 13452,
+      "latency_ms_per_sample": 0.08631840000089142,
+      "train_time_s": 754.1513261795044
+    },
+    {
+      "model": "GRU",
+      "seed": 2,
+      "test_accuracy": 0.9292919039726257,
+      "test_macro_f1": 0.6646822690963745,
+      "test_se_N": 0.9637930393218994,
+      "test_ppv_N": 0.962291419506073,
+      "test_se_S": 0.1868191659450531,
+      "test_ppv_S": 0.30353981256484985,
+      "test_se_V": 0.8788443803787231,
+      "test_ppv_V": 0.7336618304252625,
+      "test_loss": 0.30612922469608955,
+      "macs_per_sample": 1573065,
+      "sops_per_sample": 0.0,
+      "ops_per_sample": 1573065.0,
+      "val_accuracy": null,
+      "val_macro_f1": null,
+      "params": 13452,
+      "latency_ms_per_sample": 0.11082159999932628,
+      "train_time_s": 353.9895040988922
+    },
+    {
+      "model": "RSNN",
+      "seed": 0,
+      "test_accuracy": 0.9376534819602966,
+      "test_macro_f1": 0.6704519391059875,
+      "test_se_N": 0.971595287322998,
+      "test_ppv_N": 0.9699720144271851,
+      "test_se_S": 0.18082788586616516,
+      "test_ppv_S": 0.3451143503189087,
+      "test_se_V": 0.9030755162239075,
+      "test_ppv_V": 0.7233142852783203,
+      "test_loss": 0.35898998861251363,
+      "macs_per_sample": 0,
+      "sops_per_sample": 0.0,
+      "ops_per_sample": 0.0,
+      "val_accuracy": null,
+      "val_macro_f1": null,
+      "params": 4940,
+      "latency_ms_per_sample": 0.263927350000813,
+      "train_time_s": 351.86639308929443
+    },
+    {
+      "model": "RSNN",
+      "seed": 1,
+      "test_accuracy": 0.9326812028884888,
+      "test_macro_f1": 0.662480890750885,
+      "test_se_N": 0.9675019383430481,
+      "test_ppv_N": 0.9675894379615784,
+      "test_se_S": 0.18572984635829926,
+      "test_ppv_S": 0.3320350646972656,
+      "test_se_V": 0.880397617816925,
+      "test_ppv_V": 0.7028769850730896,
+      "test_loss": 0.36580955724122666,
+      "macs_per_sample": 0,
+      "sops_per_sample": 0.0,
+      "ops_per_sample": 0.0,
+      "val_accuracy": null,
+      "val_macro_f1": null,
+      "params": 4940,
+      "latency_ms_per_sample": 0.16890139999850362,
+      "train_time_s": 323.1460454463959
+    },
+    {
+      "model": "RSNN",
+      "seed": 2,
+      "test_accuracy": 0.9387900233268738,
+      "test_macro_f1": 0.6713680624961853,
+      "test_se_N": 0.9732688069343567,
+      "test_ppv_N": 0.9693447947502136,
+      "test_se_S": 0.17592592537403107,
+      "test_ppv_S": 0.3432518541812897,
+      "test_se_V": 0.9002795815467834,
+      "test_ppv_V": 0.7364675998687744,
+      "test_loss": 0.35128503014345397,
+      "macs_per_sample": 0,
+      "sops_per_sample": 0.0,
+      "ops_per_sample": 0.0,
+      "val_accuracy": null,
+      "val_macro_f1": null,
+      "params": 4940,
+      "latency_ms_per_sample": 0.21473459999833722,
+      "train_time_s": 290.49148416519165
+    }
+  ],
+  "confusion_matrices": {
+    "GRU": [
+      [
+        127921,
+        1866,
+        2867
+      ],
+      [
+        4176,
+        1070,
+        262
+      ],
+      [
+        824,
+        277,
+        8556
+      ]
+    ],
+    "RSNN": [
+      [
+        128779,
+        1737,
+        2138
+      ],
+      [
+        3303,
+        996,
+        1209
+      ],
+      [
+        821,
+        197,
+        8639
+      ]
+    ]
+  },
+  "stats": {
+    "GRU": {
+      "test_macro_f1": {
+        "mean": 0.6703291336695353,
+        "std": 0.004890846858639627
+      },
+      "test_accuracy": {
+        "mean": 0.930509606997172,
+        "std": 0.00142196805210863
+      },
+      "test_se_N": {
+        "mean": 0.964320719242096,
+        "std": 0.0018879998020565308
+      },
+      "test_se_S": {
+        "mean": 0.19426288704077402,
+        "std": 0.006896668904606879
+      },
+      "test_se_V": {
+        "mean": 0.8859894275665283,
+        "std": 0.011057747515559635
+      },
+      "test_ppv_N": {
+        "mean": 0.962385376294454,
+        "std": 0.0009122196600071268
+      },
+      "test_ppv_S": {
+        "mean": 0.33777423699696857,
+        "std": 0.05268786179611755
+      },
+      "test_ppv_V": {
+        "mean": 0.7322532733281454,
+        "std": 0.010318249606250898
+      },
+      "test_loss": {
+        "mean": 0.2998883901374307,
+        "std": 0.005405419206969914
+      },
+      "params": {
+        "mean": 13452,
+        "std": 0.0
+      },
+      "macs_per_sample": {
+        "mean": 1573065,
+        "std": 0.0
+      },
+      "sops_per_sample": {
+        "mean": 0.0,
+        "std": 0.0
+      },
+      "ops_per_sample": {
+        "mean": 1573065.0,
+        "std": 0.0
+      },
+      "latency_ms_per_sample": {
+        "mean": 0.09926104999976815,
+        "std": 0.012309929035007145
+      },
+      "train_time_s": {
+        "mean": 895.9926738739014,
+        "std": 625.1118812000317
+      }
+    },
+    "RSNN": {
+      "test_macro_f1": {
+        "mean": 0.6681002974510193,
+        "std": 0.004888058844025138
+      },
+      "test_accuracy": {
+        "mean": 0.9363749027252197,
+        "std": 0.0032489221954957598
+      },
+      "test_se_N": {
+        "mean": 0.9707886775334676,
+        "std": 0.002966843078388229
+      },
+      "test_se_S": {
+        "mean": 0.18082788586616516,
+        "std": 0.004901960492134094
+      },
+      "test_se_V": {
+        "mean": 0.8945842385292053,
+        "std": 0.012365252448100722
+      },
+      "test_ppv_N": {
+        "mean": 0.9689687490463257,
+        "std": 0.001235000174969683
+      },
+      "test_ppv_S": {
+        "mean": 0.34013375639915466,
+        "std": 0.00707522638700319
+      },
+      "test_ppv_V": {
+        "mean": 0.7208862900733948,
+        "std": 0.016926420800759266
+      },
+      "test_loss": {
+        "mean": 0.3586948586657314,
+        "std": 0.007266759808717984
+      },
+      "params": {
+        "mean": 4940,
+        "std": 0.0
+      },
+      "macs_per_sample": {
+        "mean": 0,
+        "std": 0.0
+      },
+      "sops_per_sample": {
+        "mean": 0.0,
+        "std": 0.0
+      },
+      "ops_per_sample": {
+        "mean": 0.0,
+        "std": 0.0
+      },
+      "latency_ms_per_sample": {
+        "mean": 0.21585444999921796,
+        "std": 0.04752287177221833
+      },
+      "train_time_s": {
+        "mean": 321.834640900294,
+        "std": 30.708462966633977
+      }
+    }
+  }
+}

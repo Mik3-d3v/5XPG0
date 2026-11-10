@@ -1,0 +1,124 @@
+{
+  "log_dir": "runs\\tb\\20261003-003033_final",
+  "args": {
+    "epochs": 20,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "batch": 256,
+    "lr": 0.003,
+    "hidden": 64,
+    "timesteps": 25,
+    "beta": 0.9,
+    "encoding": "direct",
+    "use_rr": true,
+    "morph": "diff",
+    "augment": true,
+    "weight_decay": 0.2,
+    "cv_folds": 5,
+    "final": true,
+    "val_records": null,
+    "data_dir": "data",
+    "manifest": "runs/manifest_stream_rsnn.json",
+    "tag": "",
+    "threads": 6,
+    "models": [
+      "RSNN"
+    ],
+    "delta_theta": 0.7,
+    "readout_bins": 3,
+    "delta_levels": 2
+  },
+  "args_by_model": {
+    "GRU": {
+      "epochs": 20,
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "batch": 256,
+      "lr": 0.003,
+      "hidden": 64,
+      "timesteps": 25,
+      "beta": 0.9,
+      "encoding": "direct",
+      "use_rr": true,
+      "morph": "diff",
+      "augment": true,
+      "weight_decay": 0.2,
+      "cv_folds": 5,
+      "final": true,
+      "val_records": null,
+      "data_dir": "data",
+      "manifest": "runs/manifest_stream_gru.json",
+      "tag": "",
+      "threads": 6,
+      "models": [
+        "GRU"
+      ],
+      "delta_theta": 0.2,
+      "readout_bins": 3,
+      "delta_levels": 2
+    },
+    "RSNN": {
+      "epochs": 20,
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "batch": 256,
+      "lr": 0.003,
+      "hidden": 64,
+      "timesteps": 25,
+      "beta": 0.9,
+      "encoding": "direct",
+      "use_rr": true,
+      "morph": "diff",
+      "augment": true,
+      "weight_decay": 0.2,
+      "cv_folds": 5,
+      "final": true,
+      "val_records": null,
+      "data_dir": "data",
+      "manifest": "runs/manifest_stream_rsnn.json",
+      "tag": "",
+      "threads": 6,
+      "models": [
+        "RSNN"
+      ],
+      "delta_theta": 0.7,
+      "readout_bins": 3,
+      "delta_levels": 2
+    }
+  },
+  "runs": [
+    {
+      "log_dir": "runs\\tb\\20261002-232911_final\\gru_seed0",
+      "checkpoint": "runs\\gru_ecg_seed0.pt"
+    },
+    {
+      "log_dir": "runs\\tb\\20261002-232911_final\\gru_seed1",
+      "checkpoint": "runs\\gru_ecg_seed1.pt"
+    },
+    {
+      "log_dir": "runs\\tb\\20261002-232911_final\\gru_seed2",
+      "checkpoint": "runs\\gru_ecg_seed2.pt"
+    },
+    {
+      "log_dir": "runs\\tb\\20261003-003033_final\\rsnn_seed0",
+      "checkpoint": "runs\\rsnn_ecg_seed0.pt"
+    },
+    {
+      "log_dir": "runs\\tb\\20261003-003033_final\\rsnn_seed1",
+      "checkpoint": "runs\\rsnn_ecg_seed1.pt"
+    },
+    {
+      "log_dir": "runs\\tb\\20261003-003033_final\\rsnn_seed2",
+      "checkpoint": "runs\\rsnn_ecg_seed2.pt"
+    }
+  ]
+}

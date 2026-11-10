@@ -1,0 +1,59 @@
+{
+  "model": "ANN",
+  "variant": "muriscv",
+  "checkpoint": "runs/ann_mnist_seed1.pt",
+  "config": {
+    "model": "ANN",
+    "seed": 1,
+    "epochs": 5,
+    "batch": 64,
+    "lr": 0.001,
+    "hidden": 128,
+    "timesteps": 25,
+    "beta": 0.9
+  },
+  "n_samples": 10000,
+  "timesteps": 0,
+  "n_in": 784,
+  "n_out": 10,
+  "input_kind": "s8",
+  "input_zero": -128,
+  "input_bytes": 784,
+  "ref_file": "ref_logits.bin",
+  "model_bytes": 102288,
+  "out_scale": 0.19996361541116628,
+  "magic": "0x334e4e41",
+  "layers": [
+    {
+      "mult": 1124335616,
+      "shift": -10,
+      "m_real": 0.0005112886428833008,
+      "in_off": 128,
+      "out_off": -128,
+      "act_min": -128,
+      "act_max": 127,
+      "acc_scale": 2.0319999175361044e-05,
+      "n_in": 784,
+      "n_out": 128
+    },
+    {
+      "mult": 1100551519,
+      "shift": -9,
+      "m_real": 0.0010009457755359396,
+      "in_off": 128,
+      "out_off": 0,
+      "act_min": -128,
+      "act_max": 127,
+      "acc_scale": 0.0002001527361067002,
+      "n_in": 128,
+      "n_out": 10
+    }
+  ],
+  "pc_test_accuracy_float": 0.9669,
+  "pc_test_accuracy_int": 0.9678,
+  "pc_test_accuracy_ours_int8": 0.9673,
+  "agreement_with_ours_int8": 0.9974,
+  "agreement_with_float": 0.9974,
+  "argmax_ties": 48,
+  "saturated_logits": 3
+}

@@ -1,0 +1,113 @@
+{
+  "model": "ANN",
+  "variant": "muriscv",
+  "checkpoint": "runs/ann_ecg_seed0.pt",
+  "config": {
+    "model": "ANN",
+    "seed": 0,
+    "epochs": 10,
+    "batch": 64,
+    "lr": 0.001,
+    "hidden": 64,
+    "timesteps": 10,
+    "beta": 0.9,
+    "weight_decay": 0.2,
+    "encoding": "none",
+    "use_rr": true,
+    "morph": "diff",
+    "augment": true,
+    "data_dir": "data",
+    "classes": [
+      "N",
+      "S",
+      "V"
+    ],
+    "val_records": [],
+    "class_weights": [
+      0.26203104853630066,
+      1.8265999555587769,
+      0.9113690853118896
+    ],
+    "n_features": 129
+  },
+  "task": "ecg",
+  "classes": [
+    "N",
+    "S",
+    "V"
+  ],
+  "n_samples": 49273,
+  "timesteps": 0,
+  "n_in": 129,
+  "n_out": 3,
+  "input_kind": "s8",
+  "input_zero": 0,
+  "input_bytes": 132,
+  "input_scale": 0.057840418627881626,
+  "ref_file": "ref_logits.bin",
+  "model_bytes": 8820,
+  "magic": "0x334e4e41",
+  "out_scale": 0.1242366196983017,
+  "layers": [
+    {
+      "mult": 1848475648,
+      "shift": -7,
+      "m_real": 0.006724715232849121,
+      "in_off": 0,
+      "out_off": -128,
+      "act_min": -128,
+      "act_max": 127,
+      "acc_scale": 0.0003154359119260346,
+      "n_in": 129,
+      "n_out": 64
+    },
+    {
+      "mult": 1437373664,
+      "shift": -9,
+      "m_real": 0.0013072837320377156,
+      "in_off": 128,
+      "out_off": 0,
+      "act_min": -128,
+      "act_max": 127,
+      "acc_scale": 0.00016241251185494622,
+      "n_in": 64,
+      "n_out": 3
+    }
+  ],
+  "pc_test_accuracy_float": 0.935218095779419,
+  "pc_test_accuracy_int": 0.9357863068580627,
+  "pc_metrics_float": {
+    "accuracy": 0.935218095779419,
+    "macro_f1": 0.670379638671875,
+    "se_N": 0.9673436284065247,
+    "ppv_N": 0.96751868724823,
+    "se_S": 0.16721132397651672,
+    "ppv_S": 0.2839963138103485,
+    "se_V": 0.9319664239883423,
+    "ppv_V": 0.7533902525901794
+  },
+  "pc_metrics_int": {
+    "accuracy": 0.9357863068580627,
+    "macro_f1": 0.6715487837791443,
+    "se_N": 0.9681803584098816,
+    "ppv_N": 0.9671523571014404,
+    "se_S": 0.16721132397651672,
+    "ppv_S": 0.2877225875854492,
+    "se_V": 0.929170548915863,
+    "ppv_V": 0.7589444518089294
+  },
+  "pc_metrics_ours_int8": {
+    "accuracy": 0.9347918629646301,
+    "macro_f1": 0.6698361039161682,
+    "se_N": 0.9668008685112,
+    "ppv_N": 0.9675447940826416,
+    "se_S": 0.16775599122047424,
+    "ppv_S": 0.2825688123703003,
+    "se_V": 0.932587742805481,
+    "ppv_V": 0.7506876587867737
+  },
+  "agreement_with_ours_int8": 0.9979704909382421,
+  "agreement_with_float": 0.997828425303919,
+  "argmax_ties": 188,
+  "saturated_logits": 0
+}

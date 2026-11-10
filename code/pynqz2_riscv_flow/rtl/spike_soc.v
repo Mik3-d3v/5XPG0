@@ -186,9 +186,75 @@ module spike_soc #(
     // ------------------------------------------------------------------
     // CPU
     // ------------------------------------------------------------------
+    // Optional SNN neuron coprocessor (custom-0 instructions, snn_pcpi.v),
+    // built only with the Verilog define SNN_COPROC (vivado/build_snn.tcl);
+    // optional ANN MAC coprocessor (custom-1 instructions, mac_pcpi.v),
+    // built only with MAC_COPROC; both defines (vivado/build_both.tcl):
+    // both units on the one PCPI port. Each unit only claims its own opcode,
+    // so wr / wait / ready are ORed and rd comes from the unit that is ready.
+    // Without any define this is the stock SoC of spike_top.bit.
+`ifdef SNN_COPROC
+`ifdef MAC_COPROC
+    localparam PCPI = 1;
+    wire        pcpi_valid;
+    wire [31:0] pcpi_insn, pcpi_rs1, pcpi_rs2;
+    wire        snn_wr, snn_wait, snn_ready, mac_wr, mac_wait, mac_ready;
+    wire [31:0] snn_rd, mac_rd;
+    snn_pcpi u_snn (
+        .clk(clk), .resetn(core_rst_n),
+        .pcpi_valid(pcpi_valid), .pcpi_insn(pcpi_insn),
+        .pcpi_rs1(pcpi_rs1), .pcpi_rs2(pcpi_rs2),
+        .pcpi_wr(snn_wr), .pcpi_rd(snn_rd),
+        .pcpi_wait(snn_wait), .pcpi_ready(snn_ready)
+    );
+    mac_pcpi u_mac (
+        .clk(clk), .resetn(core_rst_n),
+        .pcpi_valid(pcpi_valid), .pcpi_insn(pcpi_insn),
+        .pcpi_rs1(pcpi_rs1), .pcpi_rs2(pcpi_rs2),
+        .pcpi_wr(mac_wr), .pcpi_rd(mac_rd),
+        .pcpi_wait(mac_wait), .pcpi_ready(mac_ready)
+    );
+    wire        pcpi_wr    = snn_wr    | mac_wr;
+    wire        pcpi_wait  = snn_wait  | mac_wait;
+    wire        pcpi_ready = snn_ready | mac_ready;
+    wire [31:0] pcpi_rd    = mac_ready ? mac_rd : snn_rd;
+`else
+    localparam PCPI = 1;
+    wire        pcpi_valid, pcpi_wr, pcpi_wait, pcpi_ready;
+    wire [31:0] pcpi_insn, pcpi_rs1, pcpi_rs2, pcpi_rd;
+    snn_pcpi u_snn (
+        .clk(clk), .resetn(core_rst_n),
+        .pcpi_valid(pcpi_valid), .pcpi_insn(pcpi_insn),
+        .pcpi_rs1(pcpi_rs1), .pcpi_rs2(pcpi_rs2),
+        .pcpi_wr(pcpi_wr), .pcpi_rd(pcpi_rd),
+        .pcpi_wait(pcpi_wait), .pcpi_ready(pcpi_ready)
+    );
+`endif
+`elsif MAC_COPROC
+    localparam PCPI = 1;
+    wire        pcpi_valid, pcpi_wr, pcpi_wait, pcpi_ready;
+    wire [31:0] pcpi_insn, pcpi_rs1, pcpi_rs2, pcpi_rd;
+    mac_pcpi u_mac (
+        .clk(clk), .resetn(core_rst_n),
+        .pcpi_valid(pcpi_valid), .pcpi_insn(pcpi_insn),
+        .pcpi_rs1(pcpi_rs1), .pcpi_rs2(pcpi_rs2),
+        .pcpi_wr(pcpi_wr), .pcpi_rd(pcpi_rd),
+        .pcpi_wait(pcpi_wait), .pcpi_ready(pcpi_ready)
+    );
+`else
+    localparam PCPI = 0;
+    // (separate declarations: Vivado rejects a list that mixes wires with
+    // and without a net declaration assignment)
+    wire        pcpi_valid;
+    wire [31:0] pcpi_insn, pcpi_rs1, pcpi_rs2;
+    wire        pcpi_wr = 1'b0, pcpi_wait = 1'b0, pcpi_ready = 1'b0;
+    wire [31:0] pcpi_rd = 32'h0;
+`endif
+
     picorv32 #(
         .ENABLE_COUNTERS   (1),
         .ENABLE_COUNTERS64 (0),
+        .ENABLE_PCPI       (PCPI),
         .ENABLE_MUL        (0),
         .ENABLE_FAST_MUL   (1),
         .ENABLE_DIV        (1),
@@ -207,8 +273,10 @@ module spike_soc #(
         .mem_wdata   (cpu_mem_wdata),
         .mem_wstrb   (cpu_mem_wstrb),
         .mem_rdata   (cpu_mem_rdata),
-        .pcpi_valid  (), .pcpi_insn (), .pcpi_rs1 (), .pcpi_rs2 (),
-        .pcpi_wr     (1'b0), .pcpi_rd (32'h0), .pcpi_wait (1'b0), .pcpi_ready (1'b0),
+        .pcpi_valid  (pcpi_valid), .pcpi_insn (pcpi_insn),
+        .pcpi_rs1    (pcpi_rs1),   .pcpi_rs2  (pcpi_rs2),
+        .pcpi_wr     (pcpi_wr),    .pcpi_rd   (pcpi_rd),
+        .pcpi_wait   (pcpi_wait),  .pcpi_ready(pcpi_ready),
         .irq         (32'h0),
         .eoi         (),
         .trace_valid (), .trace_data ()

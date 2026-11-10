@@ -1,0 +1,21 @@
+Rebuilt from the modified RTL (rtl/spike_soc.v with MAC_COPROC support and the fixed
+no-define branch, rtl/mac_pcpi.v added), Vivado 2026.1, 2026-10-14, compared byte by byte
+with earlier builds. A .bit file is a header (design, part, build date, build time) plus
+the configuration data.
+
+SNN_COPROC only (build_snn.tcl) vs the shipped spike_top_snn.bit
+  old header: 7z020clg400, 2026/10/02 16:00:01
+  new header: 7z020clg400, 2026/10/14 16:11:35
+  design field identical: True
+  configuration data: 1202288 / 1202288 bytes, identical: True, sha256 b5adaa45bd035166...
+  differing bytes in the whole file: 6, all in the date/time fields: True
+
+no define (build.tcl) vs the 2026.1 reference build of 2026-10-02
+(reports in docs/results/snn_coprocessor/vivado_reference; shown board-identical to the
+released spike_top.bit, every output and cycle, in docs/snn_coprocessor_and_streaming.md section 1)
+  old header: 7z020clg400, 2026/10/02 15:35:16
+  new header: 7z020clg400, 2026/10/14 16:21:01
+  design field identical: True
+  configuration data: 1250796 / 1250796 bytes, identical: True, sha256 4e0d2b638cfad94b...
+  differing bytes in the whole file: 7, all in the date/time fields: True
+

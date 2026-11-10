@@ -33,7 +33,8 @@ venv/
 runs/
 data/
 
-# Build artifacts — keep the sources and the single released bitstream only
+# Build artifacts — keep the sources and the released bitstreams
+# (spike_top.bit: course; spike_top_snn.bit, spike_top_both.bit: coprocessors)
 code/pynqz2_riscv_flow/firmware/*.o
 code/pynqz2_riscv_flow/firmware/*.elf
 code/pynqz2_riscv_flow/firmware/*.map
@@ -41,7 +42,26 @@ code/pynqz2_riscv_flow/vivado/rvproj/
 code/pynqz2_riscv_flow/vivado/build-logs/
 code/pynqz2_riscv_flow/vivado/.Xil/
 code/pynqz2_riscv_flow/.board-ip
+code/ann_vs_snn_mnist/pynq/firmware/*.o
+code/ann_vs_snn_mnist/pynq/firmware/*.elf
+code/ann_vs_snn_mnist/pynq/firmware/*.map
+code/ann_vs_snn_mnist/pynq/export/
+code/ann_vs_snn_ecg/pynq/export/
+code/ann_vs_snn_ecg/pynq/export_T/
+code/ann_vs_snn_ecg/pynq/export_stream*/
 
 # OS / editor
 .DS_Store
 *.swp
+code/ann_vs_snn_mnist/pynq/muriscv/build/
+code/ann_vs_snn_mnist/pynq/export_overnight*/
+code/ann_vs_snn_ecg/pynq/export_overnight*/
+code/.overnight.running.sh
+docs/results/overnight_2026-10-12/smoke/
+docs/results/overnight_2026-10-12/state/
+
+# Website / portfolio working folder (local only)
+website/
+
+# Local tooling
+.claude/

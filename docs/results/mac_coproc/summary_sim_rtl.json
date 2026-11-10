@@ -1,0 +1,323 @@
+{
+ "bit_exact": {
+  "ecg_ann_seed0_fast": [
+   200,
+   200
+  ],
+  "ecg_ann_seed0_mac": [
+   200,
+   200
+  ],
+  "ecg_ann_seed1_fast": [
+   200,
+   200
+  ],
+  "ecg_ann_seed1_mac": [
+   200,
+   200
+  ],
+  "ecg_ann_seed2_fast": [
+   200,
+   200
+  ],
+  "ecg_ann_seed2_mac": [
+   200,
+   200
+  ],
+  "ecg_snn_seed0_hw": [
+   200,
+   200
+  ],
+  "ecg_snn_seed0_mac": [
+   200,
+   200
+  ],
+  "ecg_snn_seed1_hw": [
+   200,
+   200
+  ],
+  "ecg_snn_seed1_mac": [
+   200,
+   200
+  ],
+  "ecg_snn_seed2_hw": [
+   200,
+   200
+  ],
+  "ecg_snn_seed2_mac": [
+   200,
+   200
+  ],
+  "mnist_ann_seed0_fast": [
+   200,
+   200
+  ],
+  "mnist_ann_seed0_mac": [
+   200,
+   200
+  ],
+  "mnist_ann_seed1_fast": [
+   200,
+   200
+  ],
+  "mnist_ann_seed1_mac": [
+   200,
+   200
+  ],
+  "mnist_snn_seed0_hw": [
+   200,
+   200
+  ],
+  "mnist_snn_seed0_mac": [
+   200,
+   200
+  ],
+  "mnist_snn_seed1_hw": [
+   200,
+   200
+  ],
+  "mnist_snn_seed1_mac": [
+   200,
+   200
+  ],
+  "stream_gru_seed0_fast": [
+   1,
+   1
+  ],
+  "stream_gru_seed0_mac": [
+   10,
+   10
+  ],
+  "stream_gru_seed1_mac": [
+   10,
+   10
+  ],
+  "stream_gru_seed2_mac": [
+   10,
+   10
+  ],
+  "stream_rsnn_seed0_mac": [
+   200,
+   200
+  ],
+  "stream_rsnn_seed1_mac": [
+   200,
+   200
+  ],
+  "stream_rsnn_seed2_mac": [
+   200,
+   200
+  ]
+ },
+ "feedforward": {
+  "ecg": {
+   "ann_fast": [
+    4.89349685,
+    0.008357249656885083
+   ],
+   "ann_mac": [
+    2.140915,
+    0.006493709555600807
+   ],
+   "snn_hw": [
+    5.34296345,
+    0.032556896786548564
+   ],
+   "snn_mac": [
+    2.66966595,
+    0.032556896786548814
+   ],
+   "n_per_seed": 200,
+   "seeds": [
+    0,
+    1,
+    2
+   ],
+   "pairs": {
+    "snn_mac_faster_than_ann_mac": [
+     [
+      0,
+      200
+     ],
+     [
+      0,
+      200
+     ],
+     [
+      0,
+      200
+     ]
+    ],
+    "snn_hw_faster_than_ann_fast": [
+     [
+      2,
+      200
+     ],
+     [
+      3,
+      200
+     ],
+     [
+      0,
+      200
+     ]
+    ]
+   },
+   "ann_speedup": 2.2857095958637945,
+   "snn_mac_vs_hw": 2.001458979738836,
+   "snn_over_ann_sw_hw": 1.0918444946882966,
+   "snn_over_ann_both_units": 1.2469520124031428
+  },
+  "mnist": {
+   "ann_fast": [
+    14.153133049999997,
+    0.001826103262414839
+   ],
+   "ann_mac": [
+    5.88971675,
+    0.001531946841440941
+   ],
+   "snn_hw": [
+    32.626504925,
+    0.025688305477027662
+   ],
+   "snn_mac": [
+    32.626504925,
+    0.025688305477027662
+   ],
+   "n_per_seed": 200,
+   "seeds": [
+    0,
+    1
+   ],
+   "pairs": {
+    "snn_mac_faster_than_ann_mac": [
+     [
+      0,
+      200
+     ],
+     [
+      0,
+      200
+     ]
+    ],
+    "snn_hw_faster_than_ann_fast": [
+     [
+      0,
+      200
+     ],
+     [
+      0,
+      200
+     ]
+    ]
+   },
+   "ann_speedup": 2.4030244393797107,
+   "snn_mac_vs_hw": 1.0,
+   "snn_over_ann_sw_hw": 2.3052495460968014,
+   "snn_over_ann_both_units": 5.53957075912637
+  }
+ },
+ "streaming": {
+  "gru_mac": [
+   492.257786,
+   0.49319918618041164
+  ],
+  "gru_fast_board_same_beats": [
+   1098.3956210000001,
+   1.371034959460531
+  ],
+  "rsnn_mac_200": [
+   4.541182916666667,
+   0.024515931183687698
+  ],
+  "gru_speedup": 2.2313419367995944,
+  "rsnn_faster_than_gru_mac": [
+   [
+    10,
+    10
+   ],
+   [
+    10,
+    10
+   ],
+   [
+    10,
+    10
+   ]
+  ],
+  "n_gru_per_seed": 10
+ },
+ "board_cycle_check": {
+  "ecg_ann_seed0_fast": {
+   "n": 200,
+   "same_cycles": 0,
+   "same_outputs": 200
+  },
+  "ecg_ann_seed1_fast": {
+   "n": 200,
+   "same_cycles": 0,
+   "same_outputs": 200
+  },
+  "ecg_ann_seed2_fast": {
+   "n": 200,
+   "same_cycles": 0,
+   "same_outputs": 200
+  },
+  "ecg_snn_seed0_hw": {
+   "n": 200,
+   "same_cycles": 200,
+   "same_outputs": 200
+  },
+  "ecg_snn_seed1_hw": {
+   "n": 200,
+   "same_cycles": 200,
+   "same_outputs": 200
+  },
+  "ecg_snn_seed2_hw": {
+   "n": 200,
+   "same_cycles": 200,
+   "same_outputs": 200
+  },
+  "mnist_ann_seed0_fast": {
+   "n": 200,
+   "same_cycles": 0,
+   "same_outputs": 200
+  },
+  "mnist_ann_seed1_fast": {
+   "n": 200,
+   "same_cycles": 0,
+   "same_outputs": 200
+  },
+  "mnist_snn_seed0_hw": {
+   "n": 200,
+   "same_cycles": 200,
+   "same_outputs": 200
+  },
+  "mnist_snn_seed1_hw": {
+   "n": 200,
+   "same_cycles": 200,
+   "same_outputs": 200
+  },
+  "stream_gru_seed0_fast": {
+   "n": 1,
+   "same_cycles": 1,
+   "same_outputs": 1
+  },
+  "stream_rsnn_seed0_mac": {
+   "n": 200,
+   "same_cycles": 200,
+   "same_outputs": 200
+  },
+  "stream_rsnn_seed1_mac": {
+   "n": 200,
+   "same_cycles": 200,
+   "same_outputs": 200
+  },
+  "stream_rsnn_seed2_mac": {
+   "n": 200,
+   "same_cycles": 200,
+   "same_outputs": 200
+  }
+ }
+}

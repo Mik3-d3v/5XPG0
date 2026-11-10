@@ -1,0 +1,7 @@
+Board regression 2026-10-14: stock (spike_top.bit, fw fast) and SNN-only (spike_top_snn.bit, fw hw)
+bitstreams after the MAC changes, vs the published v3.3 board runs of the same samples.
+
+ann ecg fast: 2000 samples, identical cycles 2000/2000, identical outputs 2000/2000  (ref snn_coprocessor/v33_regression/ann_ecg_seed0_v33_board_results_fast.csv.gz)
+snn ecg hw: 2000 samples, identical cycles 2000/2000, identical outputs 2000/2000  (ref ann_vs_snn_ecg/snn_seed0_hw_board_results.csv.gz)
+ann mnist fast: 200 samples, identical cycles 200/200, identical outputs 200/200  (ref snn_coprocessor/v33_regression/ann_mnist_seed0_v33_board_results_fast.csv.gz)
+snn mnist hw: 200 samples, identical cycles 200/200, identical outputs 200/200  (ref ann_vs_snn/snn_seed0_hw_board_results.csv)

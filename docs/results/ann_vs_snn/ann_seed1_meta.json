@@ -1,0 +1,47 @@
+{
+  "model": "ANN",
+  "checkpoint": "runs/ann_mnist_seed1.pt",
+  "config": {
+    "model": "ANN",
+    "seed": 1,
+    "epochs": 5,
+    "batch": 64,
+    "lr": 0.001,
+    "hidden": 128,
+    "timesteps": 25,
+    "beta": 0.9
+  },
+  "n_samples": 10000,
+  "timesteps": 0,
+  "n_in": 784,
+  "n_out": 10,
+  "words_per_step": 25,
+  "input_bytes": 784,
+  "ref_file": "ref_logits.bin",
+  "model_bytes": 103024,
+  "layers": [
+    {
+      "p0": 8578,
+      "p1": 0,
+      "w_scale": 0.005181599789717066,
+      "in_scale": 0.00392156862745098,
+      "acc_scale": 2.0319999175361044e-05,
+      "act_scale": 0.0397427157011954,
+      "n_in": 784,
+      "n_out": 128
+    },
+    {
+      "p0": 0,
+      "p1": 0,
+      "w_scale": 0.005036211858584186,
+      "in_scale": 0.0397427157011954,
+      "acc_scale": 0.0002001527361067002,
+      "n_in": 128,
+      "n_out": 10
+    }
+  ],
+  "pc_test_accuracy_float": 0.9669,
+  "pc_test_accuracy_int": 0.9673,
+  "pc_float_int_agreement": 0.9988,
+  "out_scale": 0.0002001527361067002
+}

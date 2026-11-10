@@ -1,0 +1,222 @@
+{
+  "firmware": "mac",
+  "n_samples": 10000,
+  "runs": [
+    {
+      "model": "ANN",
+      "seed": 0,
+      "firmware": "mac",
+      "n_samples": 10000,
+      "test_accuracy": 0.9695,
+      "test_loss": 0.10679359849635899,
+      "pc_float_accuracy": 0.9695,
+      "bit_exact": 1.0,
+      "params": 101770,
+      "ops_per_sample": 101632.0,
+      "ops_executed": 20168.1452,
+      "in_events": 151.1219,
+      "hidden_events": 82.4542,
+      "latency_ms_per_sample": 5.748635188,
+      "latency_ms_min": 2.8063900000000004,
+      "latency_ms_max": 10.09523,
+      "cycles_per_sample": 574863.5188,
+      "cycles_per_op": 28.50353927439991,
+      "model_bytes": 103024
+    },
+    {
+      "model": "SNN",
+      "seed": 0,
+      "firmware": "mac",
+      "n_samples": 10000,
+      "test_accuracy": 0.9772,
+      "test_loss": 0.0751324359534539,
+      "pc_float_accuracy": 0.9769,
+      "bit_exact": 1.0,
+      "params": 101770,
+      "ops_per_sample": 336323.5276,
+      "ops_executed": 106527.1884,
+      "in_events": 2597.6757,
+      "hidden_events": 382.1038,
+      "latency_ms_per_sample": 31.810367585999998,
+      "latency_ms_min": 8.82136,
+      "latency_ms_max": 51.39394,
+      "cycles_per_sample": 3181036.7586,
+      "cycles_per_op": 29.861266465190965,
+      "model_bytes": 103024,
+      "spikes_out_per_sample": 22.4315
+    },
+    {
+      "model": "ANN",
+      "seed": 1,
+      "firmware": "mac",
+      "n_samples": 10000,
+      "test_accuracy": 0.9673,
+      "test_loss": 0.11114307422634151,
+      "pc_float_accuracy": 0.9669,
+      "bit_exact": 1.0,
+      "params": 101770,
+      "ops_per_sample": 101632.0,
+      "ops_executed": 20166.6612,
+      "in_events": 151.1219,
+      "hidden_events": 82.3058,
+      "latency_ms_per_sample": 5.748802088000001,
+      "latency_ms_min": 2.75552,
+      "latency_ms_max": 10.1194,
+      "cycles_per_sample": 574880.2088,
+      "cycles_per_op": 28.5064643620829,
+      "model_bytes": 103024
+    },
+    {
+      "model": "SNN",
+      "seed": 1,
+      "firmware": "mac",
+      "n_samples": 10000,
+      "test_accuracy": 0.9757,
+      "test_loss": 0.07923453328630234,
+      "pc_float_accuracy": 0.9759,
+      "bit_exact": 1.0,
+      "params": 101770,
+      "ops_per_sample": 336892.3116,
+      "ops_executed": 107058.3148,
+      "in_events": 2597.4042,
+      "hidden_events": 442.4574,
+      "latency_ms_per_sample": 31.937209153,
+      "latency_ms_min": 9.59364,
+      "latency_ms_max": 52.538349999999994,
+      "cycles_per_sample": 3193720.9153,
+      "cycles_per_op": 29.831600854789468,
+      "model_bytes": 103024,
+      "spikes_out_per_sample": 23.3213
+    }
+  ],
+  "stats": {
+    "ANN": {
+      "test_accuracy": {
+        "mean": 0.9684,
+        "std": 0.0015556349186103902
+      },
+      "test_loss": {
+        "mean": 0.10896833636135025,
+        "std": 0.003075543783276952
+      },
+      "pc_float_accuracy": {
+        "mean": 0.9682,
+        "std": 0.0018384776310850566
+      },
+      "bit_exact": {
+        "mean": 1.0,
+        "std": 0.0
+      },
+      "params": {
+        "mean": 101770,
+        "std": 0.0
+      },
+      "ops_per_sample": {
+        "mean": 101632.0,
+        "std": 0.0
+      },
+      "ops_executed": {
+        "mean": 20167.4032,
+        "std": 1.049346463281104
+      },
+      "in_events": {
+        "mean": 151.1219,
+        "std": 0.0
+      },
+      "hidden_events": {
+        "mean": 82.38,
+        "std": 0.10493464632808026
+      },
+      "latency_ms_per_sample": {
+        "mean": 5.748718638,
+        "std": 0.0001180161217806415
+      },
+      "latency_ms_min": {
+        "mean": 2.7809550000000005,
+        "std": 0.035970521958959806
+      },
+      "latency_ms_max": {
+        "mean": 10.107315,
+        "std": 0.017090770901278713
+      },
+      "cycles_per_sample": {
+        "mean": 574871.8637999999,
+        "std": 11.801612178046284
+      },
+      "cycles_per_op": {
+        "mean": 28.505001818241404,
+        "std": 0.002068349336209392
+      },
+      "model_bytes": {
+        "mean": 103024,
+        "std": 0.0
+      }
+    },
+    "SNN": {
+      "test_accuracy": {
+        "mean": 0.97645,
+        "std": 0.001060660171779783
+      },
+      "test_loss": {
+        "mean": 0.07718348461987812,
+        "std": 0.0029006208411443838
+      },
+      "pc_float_accuracy": {
+        "mean": 0.9763999999999999,
+        "std": 0.0007071067811865482
+      },
+      "bit_exact": {
+        "mean": 1.0,
+        "std": 0.0
+      },
+      "params": {
+        "mean": 101770,
+        "std": 0.0
+      },
+      "ops_per_sample": {
+        "mean": 336607.9196,
+        "std": 402.1910234304399
+      },
+      "ops_executed": {
+        "mean": 106792.75159999999,
+        "std": 375.5630791071943
+      },
+      "in_events": {
+        "mean": 2597.53995,
+        "std": 0.19197949109202933
+      },
+      "hidden_events": {
+        "mean": 412.2806,
+        "std": 42.67643982902044
+      },
+      "spikes_out_per_sample": {
+        "mean": 22.8764,
+        "std": 0.6291836138997907
+      },
+      "latency_ms_per_sample": {
+        "mean": 31.873788369499998,
+        "std": 0.08969053216203003
+      },
+      "latency_ms_min": {
+        "mean": 9.2075,
+        "std": 0.5460844249747472
+      },
+      "latency_ms_max": {
+        "mean": 51.966145,
+        "std": 0.8092200714576923
+      },
+      "cycles_per_sample": {
+        "mean": 3187378.83695,
+        "std": 8969.0532162029
+      },
+      "cycles_per_op": {
+        "mean": 29.84643365999022,
+        "std": 0.020976754282937306
+      },
+      "model_bytes": {
+        "mean": 103024,
+        "std": 0.0
+      }
+    }
+  }
+}

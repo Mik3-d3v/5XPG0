@@ -1,0 +1,346 @@
+{
+  "train_args": {
+    "epochs": 10,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "batch": 64,
+    "lr": 0.001,
+    "hidden": 64,
+    "timesteps": 10,
+    "beta": 0.9,
+    "encoding": "direct",
+    "use_rr": true,
+    "morph": "diff",
+    "augment": true,
+    "weight_decay": 0.2,
+    "cv_folds": 5,
+    "final": true,
+    "val_records": null,
+    "data_dir": "data",
+    "tag": "",
+    "threads": 4,
+    "models": [
+      "ANN",
+      "SNN"
+    ]
+  },
+  "classes": [
+    "N",
+    "S",
+    "V"
+  ],
+  "runs": [
+    {
+      "model": "ANN",
+      "seed": 0,
+      "test_accuracy": 0.935218095779419,
+      "test_macro_f1": 0.670379638671875,
+      "test_se_N": 0.9673436284065247,
+      "test_ppv_N": 0.96751868724823,
+      "test_se_S": 0.16721132397651672,
+      "test_ppv_S": 0.2839963138103485,
+      "test_se_V": 0.9319664239883423,
+      "test_ppv_V": 0.7533902525901794,
+      "test_loss": 0.30742482809789956,
+      "macs_per_sample": 8448,
+      "sops_per_sample": 0.0,
+      "ops_per_sample": 8448.0,
+      "val_accuracy": null,
+      "val_macro_f1": null,
+      "params": 8515,
+      "latency_ms_per_sample": 0.00019970000721514225,
+      "train_time_s": 8.097471237182617
+    },
+    {
+      "model": "SNN",
+      "seed": 0,
+      "test_accuracy": 0.9410224556922913,
+      "test_macro_f1": 0.7025697231292725,
+      "test_se_N": 0.9696956276893616,
+      "test_ppv_N": 0.9697394371032715,
+      "test_se_S": 0.22331154346466064,
+      "test_ppv_S": 0.3654188811779022,
+      "test_se_V": 0.956508219242096,
+      "test_ppv_V": 0.7824650406837463,
+      "test_loss": 0.31514463606204424,
+      "spikes_in_per_sample": 0.0,
+      "spikes_hidden_per_sample": 68.63669758285471,
+      "spikes_out_per_sample": 5.294096158139346,
+      "macs_per_sample": 8256,
+      "sops_per_sample": 205.91009274856413,
+      "ops_per_sample": 8461.910092748563,
+      "val_accuracy": null,
+      "val_macro_f1": null,
+      "params": 8515,
+      "latency_ms_per_sample": 0.015456649998668581,
+      "train_time_s": 38.6365921497345
+    },
+    {
+      "model": "ANN",
+      "seed": 1,
+      "test_accuracy": 0.9369228482246399,
+      "test_macro_f1": 0.6768107414245605,
+      "test_se_N": 0.9689493179321289,
+      "test_ppv_N": 0.9671339392662048,
+      "test_se_S": 0.17483660578727722,
+      "test_ppv_S": 0.30571427941322327,
+      "test_se_V": 0.931655764579773,
+      "test_ppv_V": 0.7646608948707581,
+      "test_loss": 0.2974736310885331,
+      "macs_per_sample": 8448,
+      "sops_per_sample": 0.0,
+      "ops_per_sample": 8448.0,
+      "val_accuracy": null,
+      "val_macro_f1": null,
+      "params": 8515,
+      "latency_ms_per_sample": 0.00021394999930635095,
+      "train_time_s": 8.168893814086914
+    },
+    {
+      "model": "SNN",
+      "seed": 1,
+      "test_accuracy": 0.942138671875,
+      "test_macro_f1": 0.7019385695457458,
+      "test_se_N": 0.9718666672706604,
+      "test_ppv_N": 0.9698925614356995,
+      "test_se_S": 0.2222222238779068,
+      "test_ppv_S": 0.3896848261356354,
+      "test_se_V": 0.9443926811218262,
+      "test_ppv_V": 0.7759060859680176,
+      "test_loss": 0.3035870596760121,
+      "spikes_in_per_sample": 0.0,
+      "spikes_hidden_per_sample": 63.581271690378095,
+      "spikes_out_per_sample": 4.968826740811398,
+      "macs_per_sample": 8256,
+      "sops_per_sample": 190.7438150711343,
+      "ops_per_sample": 8446.743815071135,
+      "val_accuracy": null,
+      "val_macro_f1": null,
+      "params": 8515,
+      "latency_ms_per_sample": 0.01421890000347048,
+      "train_time_s": 38.120481967926025
+    },
+    {
+      "model": "ANN",
+      "seed": 2,
+      "test_accuracy": 0.9364357590675354,
+      "test_macro_f1": 0.6779839396476746,
+      "test_se_N": 0.9679316282272339,
+      "test_ppv_N": 0.966882050037384,
+      "test_se_S": 0.17592592537403107,
+      "test_ppv_S": 0.296875,
+      "test_se_V": 0.9375582337379456,
+      "test_ppv_V": 0.7700943946838379,
+      "test_loss": 0.3085985697872868,
+      "macs_per_sample": 8448,
+      "sops_per_sample": 0.0,
+      "ops_per_sample": 8448.0,
+      "val_accuracy": null,
+      "val_macro_f1": null,
+      "params": 8515,
+      "latency_ms_per_sample": 0.0002232000115327537,
+      "train_time_s": 8.04015326499939
+    },
+    {
+      "model": "SNN",
+      "seed": 2,
+      "test_accuracy": 0.9429504871368408,
+      "test_macro_f1": 0.7128745913505554,
+      "test_se_N": 0.9714595675468445,
+      "test_ppv_N": 0.9706912636756897,
+      "test_se_S": 0.25108933448791504,
+      "test_ppv_S": 0.4072438180446625,
+      "test_se_V": 0.9459459185600281,
+      "test_ppv_V": 0.783178985118866,
+      "test_loss": 0.296522849274622,
+      "spikes_in_per_sample": 0.0,
+      "spikes_hidden_per_sample": 61.59152071113998,
+      "spikes_out_per_sample": 4.745783694924198,
+      "macs_per_sample": 8256,
+      "sops_per_sample": 184.77456213341992,
+      "ops_per_sample": 8440.77456213342,
+      "val_accuracy": null,
+      "val_macro_f1": null,
+      "params": 8515,
+      "latency_ms_per_sample": 0.015009200011263601,
+      "train_time_s": 37.50755596160889
+    }
+  ],
+  "confusion_matrices": {
+    "ANN": [
+      [
+        128419,
+        1939,
+        2296
+      ],
+      [
+        4047,
+        951,
+        510
+      ],
+      [
+        311,
+        329,
+        9017
+      ]
+    ],
+    "SNN": [
+      [
+        128808,
+        1741,
+        2105
+      ],
+      [
+        3757,
+        1279,
+        472
+      ],
+      [
+        212,
+        281,
+        9164
+      ]
+    ]
+  },
+  "stats": {
+    "ANN": {
+      "test_macro_f1": {
+        "mean": 0.67505810658137,
+        "std": 0.004093915607680574
+      },
+      "test_accuracy": {
+        "mean": 0.9361922343571981,
+        "std": 0.0008780794031751097
+      },
+      "test_se_N": {
+        "mean": 0.9680748581886292,
+        "std": 0.000812370500165882
+      },
+      "test_se_S": {
+        "mean": 0.17265795171260834,
+        "std": 0.004748259635086653
+      },
+      "test_se_V": {
+        "mean": 0.9337268074353536,
+        "std": 0.0033217462201646716
+      },
+      "test_ppv_N": {
+        "mean": 0.967178225517273,
+        "std": 0.00032062078626264687
+      },
+      "test_ppv_S": {
+        "mean": 0.2955285310745239,
+        "std": 0.010921412061055442
+      },
+      "test_ppv_V": {
+        "mean": 0.7627151807149252,
+        "std": 0.008520354655379052
+      },
+      "test_loss": {
+        "mean": 0.3044990096579065,
+        "std": 0.006112395227781787
+      },
+      "params": {
+        "mean": 8515,
+        "std": 0.0
+      },
+      "macs_per_sample": {
+        "mean": 8448,
+        "std": 0.0
+      },
+      "sops_per_sample": {
+        "mean": 0.0,
+        "std": 0.0
+      },
+      "ops_per_sample": {
+        "mean": 8448.0,
+        "std": 0.0
+      },
+      "latency_ms_per_sample": {
+        "mean": 0.00021228333935141563,
+        "std": 1.1838321979316917e-05
+      },
+      "train_time_s": {
+        "mean": 8.10217277208964,
+        "std": 0.06449891912040688
+      }
+    },
+    "SNN": {
+      "test_macro_f1": {
+        "mean": 0.7057942946751913,
+        "std": 0.006139832202094727
+      },
+      "test_accuracy": {
+        "mean": 0.9420372049013773,
+        "std": 0.0009680123825887092
+      },
+      "test_se_N": {
+        "mean": 0.9710072875022888,
+        "std": 0.0011540238926985016
+      },
+      "test_se_S": {
+        "mean": 0.23220770061016083,
+        "std": 0.016361042989696227
+      },
+      "test_se_V": {
+        "mean": 0.9489489396413168,
+        "std": 0.006592432608447779
+      },
+      "test_ppv_N": {
+        "mean": 0.9701077540715536,
+        "std": 0.0005111011239321653
+      },
+      "test_ppv_S": {
+        "mean": 0.3874491751194,
+        "std": 0.021001903189399665
+      },
+      "test_ppv_V": {
+        "mean": 0.7805167039235433,
+        "std": 0.004008837439080272
+      },
+      "test_loss": {
+        "mean": 0.30508484833755944,
+        "std": 0.009400811876909778
+      },
+      "params": {
+        "mean": 8515,
+        "std": 0.0
+      },
+      "macs_per_sample": {
+        "mean": 8256,
+        "std": 0.0
+      },
+      "sops_per_sample": {
+        "mean": 193.8094899843728,
+        "std": 10.896166096438202
+      },
+      "ops_per_sample": {
+        "mean": 8449.809489984373,
+        "std": 10.896166096437728
+      },
+      "spikes_in_per_sample": {
+        "mean": 0.0,
+        "std": 0.0
+      },
+      "spikes_hidden_per_sample": {
+        "mean": 64.60316332812425,
+        "std": 3.6320553654793994
+      },
+      "spikes_out_per_sample": {
+        "mean": 5.0029021979583135,
+        "std": 0.2757398990245958
+      },
+      "latency_ms_per_sample": {
+        "mean": 0.01489491667113422,
+        "std": 0.0006267389999246659
+      },
+      "train_time_s": {
+        "mean": 38.088210026423134,
+        "std": 0.5652095073338528
+      }
+    }
+  }
+}

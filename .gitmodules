@@ -1,0 +1,3 @@
+[submodule "third_party/muriscv-nn"]
+	path = third_party/muriscv-nn
+	url = https://github.com/tum-ei-eda/muriscv-nn.git

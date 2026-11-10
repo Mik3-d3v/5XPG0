@@ -1,0 +1,657 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ECG Monitor Live</title>
+<style>
+:root {
+  --bg: #0d1117; --panel: #161b22; --panel2: #1c232d; --line: #2b3440;
+  --text: #e6edf3; --muted: #8b98a8; --faint: #4a5563;
+  --a: #4f8cff; --a-soft: rgba(79,140,255,.16);
+  --b: #ff8a3d; --b-soft: rgba(255,138,61,.16);
+  --N: #3fb950; --S: #d29922; --V: #f85149;
+  --good: #3fb950; --bad: #f85149;
+  --trace: #3fdc8a; --grid: rgba(63,220,138,.08); --mon: #070b0f;
+  --radius: 14px;
+}
+:root[data-theme="light"] {
+  --bg: #f4f6f9; --panel: #ffffff; --panel2: #f0f3f7; --line: #dbe1e8;
+  --text: #121821; --muted: #5b6776; --faint: #b7c0cb;
+  --a: #1f63e0; --a-soft: rgba(31,99,224,.10);
+  --b: #e0640f; --b-soft: rgba(224,100,15,.10);
+  --N: #1a7f37; --S: #9a6700; --V: #cf222e;
+  --good: #1a7f37; --bad: #cf222e;
+  --trace: #0b7a43; --grid: rgba(11,122,67,.08); --mon: #fbfdfc;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body { background: var(--bg); color: var(--text);
+  font: 14px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  display: flex; flex-direction: column; }
+header { display: flex; align-items: center; gap: 14px; padding: 12px 22px;
+  border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+header h1 { font-size: 19px; margin: 0; font-weight: 650; letter-spacing: -.01em; }
+header h1 span { color: var(--muted); font-weight: 450; }
+.spacer { flex: 1; }
+.pill { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px;
+  border-radius: 999px; background: var(--panel); border: 1px solid var(--line);
+  font-size: 13px; color: var(--muted); white-space: nowrap; }
+.dot { width: 9px; height: 9px; border-radius: 50%; background: var(--faint); }
+.dot.on { background: var(--good); box-shadow: 0 0 0 4px rgba(63,185,80,.18); }
+.dot.off { background: var(--bad); }
+.dot.wait { background: #d29922; animation: blink 1s infinite; }
+@keyframes blink { 50% { opacity: .3; } }
+.seg { display: inline-flex; background: var(--panel); border: 1px solid var(--line);
+  border-radius: 10px; padding: 3px; gap: 3px; }
+.seg button { border: 0; background: transparent; color: var(--muted); font: inherit;
+  font-size: 13px; padding: 5px 11px; border-radius: 7px; cursor: pointer; white-space: nowrap; }
+.seg button.on { background: var(--panel2); color: var(--text); font-weight: 600;
+  box-shadow: inset 0 0 0 1px var(--line); }
+.seg button:disabled { opacity: .35; cursor: not-allowed; }
+.seg.b button.on { background: var(--b-soft); color: var(--b); box-shadow: none; }
+.lbl { font-size: 12px; color: var(--muted); }
+.iconbtn { border: 1px solid var(--line); background: var(--panel); color: var(--muted);
+  border-radius: 10px; padding: 6px 10px; cursor: pointer; font: inherit; font-size: 13px; }
+main { flex: 1; display: grid; gap: 14px; padding: 14px 22px 18px; min-height: 0;
+  grid-template-columns: 1fr 250px 1fr; grid-template-rows: auto 1fr; }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 14px 16px; min-width: 0; }
+.label { font-size: 11.5px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted);
+  font-weight: 600; }
+
+/* monitor */
+#monitor { grid-column: 1 / -1; display: grid; grid-template-columns: 250px 1fr; gap: 16px; }
+.ctl { display: flex; flex-direction: column; gap: 10px; }
+select { width: 100%; font: inherit; padding: 7px 9px; border-radius: 9px;
+  background: var(--panel2); color: var(--text); border: 1px solid var(--line); }
+.row { display: flex; gap: 8px; align-items: center; }
+.btn { flex: 1; border: 1px solid var(--line); background: var(--panel2); color: var(--text);
+  border-radius: 9px; padding: 7px 8px; font: inherit; font-weight: 600; cursor: pointer; }
+.btn:hover { border-color: var(--muted); }
+.btn.S { color: var(--S); } .btn.V { color: var(--V); }
+#clock { font-variant-numeric: tabular-nums; font-size: 13px; color: var(--muted); }
+#clock b { color: var(--text); }
+#traceWrap { position: relative; }
+#trace { width: 100%; height: 236px; display: block; border-radius: 10px; background: var(--mon); }
+.legend { display: flex; gap: 14px; font-size: 12px; color: var(--muted); margin-top: 6px; flex-wrap: wrap; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px;
+  vertical-align: -1px; }
+
+/* model columns */
+.col { display: flex; flex-direction: column; gap: 14px; min-width: 0; min-height: 0; }
+.card { border-top: 4px solid var(--c); display: flex; flex-direction: column; gap: 10px; }
+.card.A { --c: var(--a); --soft: var(--a-soft); }
+.card.B { --c: var(--b); --soft: var(--b-soft); }
+.head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.head h2 { margin: 0; font-size: 20px; color: var(--c); }
+.head .sub { color: var(--muted); font-size: 12.5px; }
+.badge { font-size: 11.5px; font-weight: 600; padding: 3px 9px; border-radius: 999px;
+  background: var(--panel2); color: var(--muted); white-space: nowrap; }
+.badge.ok { color: var(--good); background: rgba(63,185,80,.12); }
+.badge.bad { color: var(--bad); background: rgba(248,81,73,.12); }
+.top { display: grid; grid-template-columns: 112px 1fr; gap: 14px; align-items: center; }
+.cls { text-align: center; border-radius: 12px; background: var(--soft); padding: 6px 0 8px; }
+.cls .big { font-size: 50px; line-height: 1; font-weight: 750; }
+.cls .name { font-size: 11.5px; color: var(--muted); }
+.cls .truth { font-size: 11.5px; margin-top: 2px; }
+.bars { display: grid; gap: 6px; }
+.bar { display: grid; grid-template-columns: 18px 1fr 52px; gap: 8px; align-items: center;
+  font-size: 12.5px; font-variant-numeric: tabular-nums; color: var(--muted); }
+.bar .track { height: 14px; background: var(--panel2); border-radius: 7px; overflow: hidden; }
+.bar .fill { height: 100%; width: 0; border-radius: 7px; transition: width .25s ease; opacity: .45; }
+.bar.win { color: var(--text); font-weight: 650; }
+.bar.win .fill { opacity: 1; }
+canvas.act { width: 100%; height: 116px; display: block; border-radius: 8px; background: var(--panel2); }
+.actcap { font-size: 12px; color: var(--muted); }
+.kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.kpi { background: var(--panel2); border-radius: 9px; padding: 8px 10px; min-width: 0; }
+.kpi .v { font-size: 21px; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap;
+  letter-spacing: -.02em; }
+.kpi .v small { font-size: 12px; color: var(--muted); font-weight: 500; margin-left: 2px; }
+.kpi .k { font-size: 11.5px; color: var(--muted); }
+.kpi.hero .v { color: var(--c); }
+
+/* metrics */
+.metrics { border-top: 4px solid var(--c); }
+.metrics.A { --c: var(--a); } .metrics.B { --c: var(--b); }
+.mgrid { display: grid; grid-template-columns: 128px auto 1fr; gap: 16px; margin-top: 8px;
+  align-items: start; }
+table.cm { width: auto; }
+.f1 { font-size: 38px; font-weight: 750; color: var(--c); font-variant-numeric: tabular-nums;
+  line-height: 1; }
+.f1sub { font-size: 12px; color: var(--muted); margin-top: 3px; }
+table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; font-size: 12.5px; }
+th, td { padding: 4px 6px; text-align: right; }
+th { color: var(--muted); font-weight: 600; font-size: 11.5px; }
+td:first-child, th:first-child { text-align: left; }
+.cm td { text-align: center; border-radius: 5px; font-weight: 600; }
+.cm th { text-align: center; }
+.small { font-size: 12px; color: var(--muted); }
+
+/* compare */
+#compare { display: flex; flex-direction: column; gap: 14px; }
+.vs { text-align: center; font-size: 13px; color: var(--muted); }
+.big2 { font-size: 30px; font-weight: 750; text-align: center; font-variant-numeric: tabular-nums; }
+.stack { display: grid; gap: 7px; }
+.srow { display: grid; grid-template-columns: 1fr auto; font-size: 13px; }
+.srow b { font-variant-numeric: tabular-nums; }
+.lane { display: grid; grid-template-columns: 1fr; gap: 3px; }
+.lane .track { height: 18px; background: var(--panel2); border-radius: 6px; overflow: hidden; }
+.lane .fill { height: 100%; width: 0; border-radius: 6px; transition: width .4s ease; }
+.lane .t { font-size: 12px; color: var(--muted); display: flex; justify-content: space-between; }
+.lane .t b { color: var(--text); font-variant-numeric: tabular-nums; }
+.verdict { font-size: 15px; font-weight: 650; text-align: center; }
+@media (max-width: 1200px) {
+  main { grid-template-columns: 1fr; }
+  #monitor { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>ECG monitor <span>· two networks classify every heartbeat on a PicoRV32 RISC-V core</span></h1>
+  <div class="spacer"></div>
+  <span class="pill"><span id="boardDot" class="dot"></span><span id="boardTxt">connecting…</span></span>
+  <button class="iconbtn" id="reconBtn" style="display:none">Reconnect</button>
+  <div class="seg" id="srcSeg">
+    <button data-v="board" class="on">FPGA</button><button data-v="pc">Software</button>
+  </div>
+  <div class="seg" id="pairSeg">
+    <button data-v="beat" class="on" title="key B">Beat: ANN vs SNN</button>
+    <button data-v="stream" title="key G">Streaming: GRU vs recurrent SNN</button>
+  </div>
+  <span class="lbl">SNN on</span>
+  <div class="seg b" id="fwSeg">
+    <button data-v="fast" class="on" title="key 1">Software</button>
+    <button data-v="hw" title="key 2">Custom instructions</button>
+  </div>
+  <button class="iconbtn" id="themeBtn" title="light / dark">◐</button>
+</header>
+
+<main>
+  <section class="panel" id="monitor">
+    <div class="ctl">
+      <div class="label">Patient (held-out, MIT-BIH DS2)</div>
+      <select id="recSel"></select>
+      <div class="small" id="recNote">&nbsp;</div>
+      <div class="row">
+        <button class="btn" id="playBtn" title="space">❚❚ Pause</button>
+        <button class="btn" id="restartBtn" title="restart the record">⟲</button>
+      </div>
+      <div class="label">Speed</div>
+      <div class="seg" id="speedSeg"></div>
+      <div class="row">
+        <button class="btn S" id="seekS" title="key S">next S beat</button>
+        <button class="btn V" id="seekV" title="key V">next V beat</button>
+      </div>
+      <div id="clock">&nbsp;</div>
+    </div>
+    <div id="traceWrap">
+      <canvas id="trace"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--N)"></i>N normal</span>
+        <span><i style="background:var(--S)"></i>S supraventricular</span>
+        <span><i style="background:var(--V)"></i>V ventricular</span>
+        <span>rows under each beat: <b>true label</b> · <b id="legA" style="color:var(--a)">A</b> · <b id="legB" style="color:var(--b)">B</b> (✗ = wrong, · = still computing)</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="col" id="colA"></section>
+  <section class="col">
+    <div class="panel" id="compare">
+      <div class="label">Head to head</div>
+      <div class="vs"><b id="cmpA" style="color:var(--a)">A</b> vs <b id="cmpB" style="color:var(--b)">B</b></div>
+      <div>
+        <div class="label" style="margin-bottom:6px">Latency per beat (board)</div>
+        <div class="lane"><div class="t"><span id="laneAName">A</span><b id="laneAT">–</b></div>
+          <div class="track"><div class="fill" id="laneA" style="background:var(--a)"></div></div></div>
+        <div class="lane" style="margin-top:8px"><div class="t"><span id="laneBName">B</span><b id="laneBT">–</b></div>
+          <div class="track"><div class="fill" id="laneB" style="background:var(--b)"></div></div></div>
+        <div class="verdict" id="verdict" style="margin-top:10px">&nbsp;</div>
+      </div>
+      <div>
+        <div class="label" style="margin-bottom:6px">Same beats</div>
+        <div class="stack">
+          <div class="srow"><span>predict the same class</span><b id="agSame">–</b></div>
+          <div class="srow"><span>both correct</span><b id="agBoth">–</b></div>
+          <div class="srow"><span id="agALbl">only A correct</span><b id="agA">–</b></div>
+          <div class="srow"><span id="agBLbl">only B correct</span><b id="agB">–</b></div>
+          <div class="srow"><span>both wrong</span><b id="agNone">–</b></div>
+        </div>
+      </div>
+      <div>
+        <div class="label" style="margin-bottom:6px">Real time</div>
+        <div class="stack">
+          <div class="srow"><span id="loadALbl">A core load</span><b id="loadA">–</b></div>
+          <div class="srow"><span id="loadBLbl">B core load</span><b id="loadB">–</b></div>
+          <div class="small">share of the beat-to-beat time the core needs per beat; above 100 % a model cannot keep up with the heart</div>
+        </div>
+      </div>
+      <button class="btn" id="resetBtn">Reset metrics</button>
+    </div>
+  </section>
+  <section class="col" id="colB"></section>
+</main>
+
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const CLS = ["N", "S", "V"], CNAME = ["Normal", "Supraventricular", "Ventricular"];
+const FS = 180, WIN_S = 8;
+let INFO = null, slots = [], seq = 0, sigBuf = { start: 0, data: [] }, known = {};
+let results = new Map(), beatsVis = [], last = null, latest = {}, polling = false;
+let actDrawn = {};                               // redraw activations only on a new beat
+
+// ---------------------------------------------------------------- theme
+try { const t = localStorage.getItem("ecgTheme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+$("themeBtn").onclick = () => {
+  const r = document.documentElement;
+  r.dataset.theme = r.dataset.theme === "light" ? "dark" : "light";
+  try { localStorage.setItem("ecgTheme", r.dataset.theme); } catch (e) {}
+  drawAll();
+};
+
+// ---------------------------------------------------------------- controls
+const post = body => fetch("/api/control", { method: "POST",
+  headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+function segInit(id, onPick) {
+  $(id).querySelectorAll("button").forEach(b => b.onclick = () => onPick(b.dataset.v));
+}
+function segSet(id, v) {
+  $(id).querySelectorAll("button").forEach(b => b.classList.toggle("on", b.dataset.v === String(v)));
+}
+segInit("srcSeg", v => post({ action: "source", value: v }));
+segInit("pairSeg", v => { post({ action: "pair", value: v }); results.clear(); latest = {}; known = {}; });
+segInit("fwSeg", v => post({ action: "fw", value: v }));
+$("playBtn").onclick = () => post({ action: last && last.playing ? "pause" : "play" });
+$("restartBtn").onclick = () => { post({ action: "restart" }); results.clear(); };
+$("seekS").onclick = () => post({ action: "seek", value: "S" });
+$("seekV").onclick = () => post({ action: "seek", value: "V" });
+$("resetBtn").onclick = () => post({ action: "reset" });
+$("recSel").onchange = e => { post({ action: "record", value: e.target.value }); results.clear(); };
+$("reconBtn").onclick = () => post({ action: "reconnect" });
+document.addEventListener("keydown", e => {
+  if (e.target.tagName === "SELECT") return;
+  const k = e.key.toLowerCase();
+  if (k === " ") { e.preventDefault(); $("playBtn").click(); }
+  if (k === "s") $("seekS").click();
+  if (k === "v") $("seekV").click();
+  if (k === "1") post({ action: "fw", value: "fast" });
+  if (k === "2") post({ action: "fw", value: "hw" });
+  if (k === "b") $("pairSeg").querySelector('[data-v="beat"]').click();
+  if (k === "g") $("pairSeg").querySelector('[data-v="stream"]').click();
+});
+
+// ---------------------------------------------------------------- columns
+function columnHTML(side) {
+  return `
+  <div class="panel card ${side}">
+    <div class="head"><h2 id="name${side}">–</h2><span class="sub" id="desc${side}"></span>
+      <span class="spacer"></span><span class="badge" id="badge${side}">–</span></div>
+    <div class="top">
+      <div class="cls"><div class="big" id="cls${side}">–</div><div class="name" id="clsName${side}">latest beat</div>
+        <div class="truth" id="truth${side}">&nbsp;</div></div>
+      <div class="bars" id="bars${side}">${CLS.map((c, i) => `
+        <div class="bar"><span style="color:var(--${c})">${c}</span><div class="track"><div class="fill" style="background:var(--${c})"></div></div><span class="val">–</span></div>`).join("")}
+      </div>
+    </div>
+    <div class="label" id="actLbl${side}">Activations, latest beat</div>
+    <canvas class="act" id="act${side}"></canvas>
+    <div class="actcap" id="work${side}">&nbsp;</div>
+    <div class="kpis">
+      <div class="kpi hero"><div class="v" id="ms${side}">–</div><div class="k">latency / beat</div></div>
+      <div class="kpi"><div class="v" id="cyc${side}">–</div><div class="k">cycles</div></div>
+      <div class="kpi"><div class="v" id="en${side}">–</div><div class="k">≈ energy / beat</div></div>
+      <div class="kpi"><div class="v" id="lag${side}">–</div><div class="k">waiting · lag</div></div>
+    </div>
+  </div>
+  <div class="panel metrics ${side}">
+    <div class="label">Classification so far (this session)</div>
+    <div class="mgrid">
+      <div><div class="f1" id="f1${side}">–</div><div class="f1sub">macro-F1 over N / S / V</div>
+        <div class="f1sub" id="acc${side}">&nbsp;</div><div class="f1sub" id="ref${side}">&nbsp;</div></div>
+      <div><table class="cm" id="cm${side}"></table></div>
+      <div><table id="pc${side}"></table></div>
+    </div>
+    <div class="small" id="lat${side}" style="margin-top:8px">&nbsp;</div>
+  </div>`;
+}
+$("colA").innerHTML = columnHTML("A");
+$("colB").innerHTML = columnHTML("B");
+
+// ---------------------------------------------------------------- info
+async function loadInfo() {
+  INFO = await (await fetch("/api/info")).json();
+  $("recSel").innerHTML = INFO.records.map(r =>
+    `<option value="${r.rec}">${r.rec} · N ${r.n[0]} · S ${r.n[1]} · V ${r.n[2]}${r.note ? " · " + r.note : ""}</option>`).join("");
+  $("speedSeg").innerHTML = INFO.speeds.map(s => `<button data-v="${s}">${s}×</button>`).join("");
+  segInit("speedSeg", v => post({ action: "speed", value: v }));
+  if (INFO.offline) $("srcSeg").querySelector('[data-v="board"]').disabled = true;
+}
+
+// ---------------------------------------------------------------- polling
+async function poll() {
+  if (polling || !INFO) return;
+  polling = true;
+  try {
+    const sigNext = sigBuf.data.length ? sigBuf.start + sigBuf.data.length : -1;
+    const r = await fetch(`/api/poll?since=${seq}&sig=${sigNext}&known=${encodeURIComponent(JSON.stringify(known))}`);
+    const p = await r.json();
+    ingest(p);
+  } catch (e) { /* server restarting */ }
+  polling = false;
+}
+function ingest(p) {
+  const pairChanged = last && last.pair !== p.pair, recChanged = last && last.rec !== p.rec;
+  if (pairChanged || recChanged) { results.clear(); latest = {}; known = {}; }
+  last = p;
+  slots = INFO.pairs[p.pair].map(m => m.name);
+  // signal buffer (keep ~14 s)
+  if (!sigBuf.data.length || p.sig_from !== sigBuf.start + sigBuf.data.length || recChanged) {
+    sigBuf = { start: p.sig_from, data: p.sig.slice() };
+  } else {
+    sigBuf.data.push(...p.sig);
+  }
+  const keep = 14 * FS;
+  if (sigBuf.data.length > keep) {
+    const cut = sigBuf.data.length - keep;
+    sigBuf.data.splice(0, cut); sigBuf.start += cut;
+  }
+  beatsVis = p.beats;
+  for (const e of p.events) {
+    seq = Math.max(seq, e.seq);
+    if (e.rec !== p.rec) continue;
+    const key = e.k;
+    if (!results.has(key)) results.set(key, {});
+    results.get(key)[e.slot] = e;
+  }
+  if (results.size > 900) {
+    const ks = [...results.keys()].sort((a, b) => a - b);
+    ks.slice(0, results.size - 900).forEach(k => results.delete(k));
+  }
+  for (const [s, v] of Object.entries(p.latest)) latest[s] = v;
+  known = p.latest_seq;
+  renderControls(p);
+  renderColumns(p);
+  renderCompare(p);
+  drawTrace();
+}
+
+// ---------------------------------------------------------------- header + monitor
+function renderControls(p) {
+  segSet("srcSeg", p.source); segSet("pairSeg", p.pair); segSet("fwSeg", p.fw); segSet("speedSeg", p.speed);
+  if ($("recSel").value !== String(p.rec)) $("recSel").value = p.rec;
+  const rinfo = INFO.records.find(r => r.rec === p.rec);
+  $("recNote").textContent = rinfo ? `${rinfo.note || "record " + p.rec} · ${rinfo.n[0] + rinfo.n[1] + rinfo.n[2]} beats` : "";
+  $("playBtn").textContent = p.playing ? "❚❚ Pause" : "▶ Play";
+  const t = p.pos / FS, tot = p.len / FS;
+  const mmss = s => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+  $("clock").innerHTML = `record time <b>${mmss(t)}</b> / ${mmss(tot)} · playing at <b>${p.speed}×</b>`;
+  const st = p.status, dot = $("boardDot");
+  if (p.offline || p.source === "pc") {
+    dot.className = "dot"; $("boardTxt").textContent = p.offline ? "software mode (no FPGA)" : "software mode · FPGA idle";
+  } else {
+    dot.className = "dot " + (st.board ? "on" : st.reconnecting ? "wait" : "off");
+    $("boardTxt").textContent = st.board ? "FPGA connected · " + st.bit
+      : st.reconnecting ? "FPGA reconnecting… (board booting / loading bitstream)" : "FPGA not connected";
+  }
+  $("reconBtn").style.display = !p.offline && p.source === "board" && !st.board ? "" : "none";
+  const hasHw = !p.offline && st.board && (st.firmware || []).includes("hw") && (st.bit || "").includes("snn");
+  $("fwSeg").querySelector('[data-v="hw"]').disabled = p.source !== "board" || !hasHw;
+}
+
+function drawTrace() {
+  const c = $("trace"), dpr = window.devicePixelRatio || 1;
+  c.width = c.clientWidth * dpr; c.height = c.clientHeight * dpr;
+  const g = c.getContext("2d"); g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const W = c.clientWidth, H = c.clientHeight;
+  g.clearRect(0, 0, W, H);
+  if (!last) return;
+  const traceH = H - 84, end = last.pos, start = end - WIN_S * FS;
+  const x = s => (s - start) / (WIN_S * FS) * W;
+  // grid: 0.2 s / 0.5 mV
+  g.strokeStyle = css("--grid"); g.lineWidth = 1;
+  for (let s = Math.ceil(start / 36) * 36; s < end; s += 36) { g.beginPath(); g.moveTo(x(s), 0); g.lineTo(x(s), traceH); g.stroke(); }
+  // signal
+  const d = sigBuf.data, s0 = sigBuf.start;
+  let lo = Infinity, hi = -Infinity;
+  for (let i = Math.max(0, start - s0); i < d.length; i++) { lo = Math.min(lo, d[i]); hi = Math.max(hi, d[i]); }
+  if (!isFinite(lo)) return;
+  const pad = (hi - lo) * .12 + .05; lo -= pad; hi += pad;
+  const y = v => traceH - (v - lo) / (hi - lo) * traceH;
+  g.strokeStyle = css("--trace"); g.lineWidth = 1.6; g.beginPath();
+  let first = true;
+  for (let i = Math.max(0, Math.floor(start - s0)); i < d.length; i++) {
+    const px = x(s0 + i), py = y(d[i]);
+    if (first) { g.moveTo(px, py); first = false; } else g.lineTo(px, py);
+  }
+  g.stroke();
+  // beats: true label + predictions of A and B
+  const rows = [traceH + 16, traceH + 42, traceH + 68];
+  g.font = "650 14px system-ui"; g.textAlign = "center"; g.textBaseline = "middle";
+  g.fillStyle = css("--muted"); g.textAlign = "left";
+  g.fillText("true", 4, rows[0]);
+  g.fillStyle = css("--a"); g.fillText(INFO.pairs[last.pair][0].label, 4, rows[1]);
+  g.fillStyle = css("--b"); g.fillText(INFO.pairs[last.pair][1].label.replace("Recurrent ", "R"), 4, rows[2]);
+  g.textAlign = "center";
+  const gutter = 64;
+  for (const [r, lab] of beatsVis) {
+    const bx = x(r);
+    if (bx < gutter || bx > W) continue;
+    g.strokeStyle = css("--line"); g.setLineDash([2, 3]);
+    g.beginPath(); g.moveTo(bx, 0); g.lineTo(bx, traceH); g.stroke(); g.setLineDash([]);
+    chip(g, bx, rows[0], CLS[lab], css("--" + CLS[lab]), false);
+    const k = beatIndexAt(r);
+    const res = k !== null ? results.get(k) : null;
+    slots.forEach((s, i) => {
+      const e = res && res[s];
+      if (!e) { g.fillStyle = css("--faint"); g.fillText("·", bx, rows[i + 1]); return; }
+      chip(g, bx, rows[i + 1], CLS[e.pred], css("--" + CLS[e.pred]), e.pred !== e.true);
+    });
+  }
+}
+function beatIndexAt(r) {
+  for (const [k, v] of results) for (const e of Object.values(v)) if (e.r === r) return k;
+  return null;
+}
+function chip(g, cx, cy, txt, col, wrong) {
+  g.fillStyle = col; g.globalAlpha = .18;
+  const w = wrong ? 32 : 26;
+  roundRect(g, cx - w / 2, cy - 11, w, 22, 6); g.fill(); g.globalAlpha = 1;
+  if (wrong) { g.strokeStyle = css("--bad"); g.lineWidth = 2; roundRect(g, cx - w / 2, cy - 11, w, 22, 6); g.stroke(); }
+  g.fillStyle = col; g.fillText(wrong ? txt + "✗" : txt, cx + (wrong ? 1 : 0), cy + 1);
+}
+function roundRect(g, x, y, w, h, r) {
+  g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r);
+  g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath();
+}
+
+// ---------------------------------------------------------------- columns
+const fmt = (v, d = 0) => v == null ? "–" : v.toLocaleString("en-US", { maximumFractionDigits: d, minimumFractionDigits: d });
+const msTxt = ms => ms == null ? "–" : ms < 10 ? fmt(ms, 2) : ms < 100 ? fmt(ms, 1) : fmt(ms, 0);
+function renderColumns(p) {
+  const pair = INFO.pairs[p.pair];
+  ["A", "B"].forEach((side, i) => {
+    const m = pair[i], s = m.name, met = p.metrics[s] || {};
+    $("name" + side).textContent = m.label;
+    $("desc" + side).textContent = m.desc + ` · ${fmt(m.params)} params`;
+    const lt = latest[s];
+    if (lt) {
+      $("cls" + side).textContent = CLS[lt.pred];
+      $("cls" + side).style.color = css("--" + CLS[lt.pred]);
+      $("clsName" + side).textContent = CNAME[lt.pred];
+      $("truth" + side).innerHTML = lt.pred === lt.true
+        ? `<span style="color:var(--good)">✓ true ${CLS[lt.true]}</span>`
+        : `<span style="color:var(--bad)">✗ true ${CLS[lt.true]}</span>`;
+      $("work" + side).textContent = lt.act.work;
+    }
+    // latest event of this slot for probs / latency
+    let ev = null;
+    for (const v of results.values()) if (v[s] && (!ev || v[s].seq > ev.seq)) ev = v[s];
+    if (ev) {
+      const bars = $("bars" + side).children;
+      const isCounts = m.kind === "SNN";
+      ev.probs.forEach((pv, c) => {
+        bars[c].classList.toggle("win", c === ev.pred);
+        bars[c].querySelector(".fill").style.width = (100 * pv) + "%";
+        bars[c].querySelector(".val").textContent = isCounts ? `${ev.out[c]} spk` : (100 * pv).toFixed(0) + "%";
+      });
+      const b = $("badge" + side);
+      if (ev.board) { b.className = "badge " + (ev.exact ? "ok" : "bad"); b.textContent = ev.exact ? "✓ board = PC int8" : "✗ board ≠ PC int8"; }
+      else { b.className = "badge"; b.textContent = "PC int8 (software)"; }
+      $("ms" + side).innerHTML = ev.board ? `${msTxt(ev.ms)}<small>ms</small>` : `${msTxt(ev.pc_ms)}<small>ms PC</small>`;
+      $("cyc" + side).innerHTML = ev.board ? (ev.cycles >= 1e6 ? (ev.cycles / 1e6).toFixed(1) + "<small>M</small>" : (ev.cycles / 1e3).toFixed(0) + "<small>k</small>") : "–";
+      $("en" + side).innerHTML = ev.board ? (ev.ms * 1.695 >= 1000 ? `${fmt(ev.ms * 1.695 / 1000, 2)}<small>J</small>` : `${fmt(ev.ms * 1.695, 1)}<small>mJ</small>`) : "–";
+    }
+    $("lag" + side).innerHTML = `${p.pending[s] ?? 0}<small>beats · ${fmt(p.lag[s], 1)} s</small>`;
+    $("actLbl" + side).textContent = {
+      ANN: "Hidden activations, latest beat (64 ReLU units)",
+      SNN: `Hidden spikes, latest beat (64 LIF neurons × ${lt && lt.act.steps || 10} steps)`,
+      GRU: "Hidden state over the beat (64 units × 126 samples)",
+      RSNN: "Input events and hidden spikes over the beat (64 neurons × 126 samples)",
+    }[m.kind];
+    const key = lt ? `${p.pair}:${s}:${lt.k}:${p.rec}` : "";
+    if (actDrawn[side] !== key) { drawAct(side, m.kind, lt); actDrawn[side] = key; }
+    renderMetrics(side, m, met);
+  });
+  $("legA").textContent = pair[0].label; $("legB").textContent = pair[1].label;
+}
+
+function renderMetrics(side, m, met) {
+  $("f1" + side).textContent = met.macro_f1 == null ? "–" : met.macro_f1.toFixed(3);
+  $("acc" + side).textContent = met.n ? `accuracy ${(100 * met.acc).toFixed(1)} % · ${fmt(met.n)} beats` : "no beats yet";
+  $("ref" + side).textContent = `all 49 273 test beats: ${m.ds2_f1.toFixed(3)}`;
+  // confusion matrix
+  const cm = met.cm || [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
+  const mx = Math.max(1, ...cm.flat());
+  let h = `<tr><th>true \\ pred</th>${CLS.map(c => `<th style="color:var(--${c})">${c}</th>`).join("")}</tr>`;
+  cm.forEach((row, i) => {
+    h += `<tr><th style="color:var(--${CLS[i]});text-align:left">${CLS[i]}</th>` + row.map((v, j) => {
+      const a = v ? .12 + .7 * Math.sqrt(v / mx) : 0;
+      const col = i === j ? css("--good") : css("--bad");
+      return `<td style="background:${hexA(col, a)}">${fmt(v)}</td>`;
+    }).join("") + "</tr>";
+  });
+  $("cm" + side).innerHTML = h;
+  // per class
+  let t = `<tr><th>class</th><th>beats</th><th>Se</th><th>+P</th><th>F1</th></tr>`;
+  CLS.forEach((c, i) => {
+    const n = cm[i].reduce((a, b) => a + b, 0), np = cm.reduce((a, r) => a + r[i], 0);
+    t += `<tr><td style="color:var(--${c});font-weight:650">${c}</td><td>${fmt(n)}</td>` +
+      `<td>${n ? (100 * met.se[i]).toFixed(1) + " %" : "–"}</td>` +
+      `<td>${np ? (100 * met.ppv[i]).toFixed(1) + " %" : "–"}</td>` +
+      `<td>${n && np ? met.f1[i].toFixed(2) : "–"}</td></tr>`;
+  });
+  $("pc" + side).innerHTML = t;
+  $("lat" + side).innerHTML = met.board_n
+    ? `board: mean <b>${msTxt(met.ms_mean)} ms</b>, p95 ${msTxt(met.ms_p95)} ms per beat · bit-exact ${fmt(met.bit_exact)} / ${fmt(met.board_n)} · energy so far ≈ ${fmt(met.energy_mj, 0)} mJ`
+    : met.n ? `software mode: PC int8, ${msTxt(met.pc_ms_mean)} ms per beat on the PC` : "&nbsp;";
+}
+function hexA(col, a) {
+  if (col.startsWith("#")) { const n = parseInt(col.slice(1), 16); return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a})`; }
+  return col;
+}
+
+function renderCompare(p) {
+  const pair = INFO.pairs[p.pair], [a, b] = pair, ma = p.metrics[a.name] || {}, mb = p.metrics[b.name] || {};
+  $("cmpA").textContent = a.label; $("cmpB").textContent = b.label;
+  $("laneAName").textContent = a.label; $("laneBName").textContent = b.label;
+  $("agALbl").textContent = `only ${a.label} correct`; $("agBLbl").textContent = `only ${b.label} correct`;
+  $("loadALbl").textContent = `${a.label} core load`; $("loadBLbl").textContent = `${b.label} core load`;
+  const ag = p.agree, tot = ag.both + ag.only_a + ag.only_b + ag.neither;
+  $("agSame").textContent = tot ? (100 * ag.same / tot).toFixed(1) + " %" : "–";
+  $("agBoth").textContent = fmt(ag.both); $("agA").textContent = fmt(ag.only_a);
+  $("agB").textContent = fmt(ag.only_b); $("agNone").textContent = fmt(ag.neither);
+  const la = ma.ms_mean, lb = mb.ms_mean;
+  const pct = v => v == null ? "–" : (v * 100 < 0.1 ? "<0.1" : (v * 100).toFixed(v * 100 < 10 ? 1 : 0)) + " %";
+  $("loadA").textContent = pct(ma.load); $("loadB").textContent = pct(mb.load);
+  $("loadA").style.color = ma.load > 1 ? css("--bad") : ""; $("loadB").style.color = mb.load > 1 ? css("--bad") : "";
+  if (la != null && lb != null) {
+    const mx = Math.max(la, lb);
+    $("laneA").style.width = (100 * la / mx) + "%"; $("laneB").style.width = (100 * lb / mx) + "%";
+    $("laneAT").textContent = msTxt(la) + " ms"; $("laneBT").textContent = msTxt(lb) + " ms";
+    const r = lb / la;
+    $("verdict").innerHTML = r >= 1
+      ? `<span style="color:var(--a)">${a.label}</span> ${r.toFixed(r < 10 ? 1 : 0)}× faster`
+      : `<span style="color:var(--b)">${b.label}</span> ${(1 / r).toFixed(1 / r < 10 ? 1 : 0)}× faster`;
+  } else {
+    $("laneA").style.width = $("laneB").style.width = 0;
+    $("laneAT").textContent = $("laneBT").textContent = "–";
+    $("verdict").innerHTML = `<span class="small">${p.source === "pc" ? "software mode: no board latency" : "waiting for board results"}</span>`;
+  }
+}
+
+// ---------------------------------------------------------------- activations
+function drawAct(side, kind, lt) {
+  const c = $("act" + side), dpr = window.devicePixelRatio || 1;
+  c.width = c.clientWidth * dpr; c.height = c.clientHeight * dpr;
+  const g = c.getContext("2d"); g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const W = c.clientWidth, H = c.clientHeight;
+  g.clearRect(0, 0, W, H);
+  if (!lt) return;
+  const col = css(side === "A" ? "--a" : "--b"), muted = css("--muted"), faint = css("--faint");
+  const a = lt.act, beat = lt.beat;
+  const waveH = 38;
+  // beat - template waveform on top (the model input)
+  const drawWave = (x0, w) => {
+    let lo = Math.min(...beat), hi = Math.max(...beat); if (hi - lo < 1e-3) { hi += 1; lo -= 1; }
+    g.strokeStyle = css("--trace"); g.lineWidth = 1.4; g.beginPath();
+    beat.forEach((v, i) => { const px = x0 + i / (beat.length - 1) * w, py = 4 + (hi - v) / (hi - lo) * (waveH - 8);
+      i ? g.lineTo(px, py) : g.moveTo(px, py); });
+    g.stroke();
+    g.fillStyle = muted; g.font = "11px system-ui"; g.textAlign = "left";
+    g.fillText("beat − patient template", x0 + 4, waveH - 2);
+  };
+  if (kind === "ANN") {
+    drawWave(0, W);
+    const h = a.hidden, mx = Math.max(1, ...h), bw = W / h.length, top = waveH + 8, bh = H - top - 4;
+    h.forEach((v, i) => { const hh = bh * v / mx; g.fillStyle = v ? col : faint; g.globalAlpha = v ? .9 : .35;
+      g.fillRect(i * bw + 1, top + bh - Math.max(hh, 1.5), bw - 2, Math.max(hh, 1.5)); });
+    g.globalAlpha = 1;
+  } else if (kind === "SNN") {
+    drawWave(0, W);
+    const T = a.steps, top = waveH + 8, bh = H - top - 4, lw = 48, cw = (W - lw) / T, ch = bh / 64;
+    g.fillStyle = muted; g.font = "11px system-ui"; g.textAlign = "right";
+    g.fillText("step →", lw - 4, top + 8);
+    for (let t = 0; t < T; t++) { g.fillStyle = faint; g.globalAlpha = .25; g.fillRect(lw + t * cw + 1, top, cw - 2, bh); }
+    g.globalAlpha = 1; g.fillStyle = col;
+    a.raster.forEach(([t, n]) => g.fillRect(lw + t * cw + 2, top + n * ch, cw - 4, Math.max(ch - .5, 1)));
+  } else if (kind === "GRU") {
+    const L = a.steps, raw = Uint8Array.from(atob(a.heat), ch => ch.charCodeAt(0));
+    drawWave(0, W);
+    const top = waveH + 4, bh = H - top - 2, cw = W / L, ch = bh / 64;
+    const aCol = hexRGB(col), neg = hexRGB(css("--V"));
+    for (let t = 0; t < L; t++) for (let n = 0; n < 64; n++) {
+      let v = raw[t * 64 + n]; if (v > 127) v -= 256;
+      const s = Math.abs(v) / 127, rgb = v >= 0 ? aCol : neg;
+      g.fillStyle = `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${s})`;
+      g.fillRect(t * cw, top + n * ch, cw + .5, ch + .5);
+    }
+  } else if (kind === "RSNN") {
+    const L = a.steps;
+    drawWave(0, W);
+    const top = waveH + 4, bh = H - top - 2, cw = W / L, ch = bh / 64;
+    // input events as ticks on the waveform
+    a.in_events.forEach(([t, c]) => {
+      const up = c < a.levels; g.fillStyle = up ? css("--N") : css("--V");
+      g.fillRect(t * cw, up ? 2 : waveH - 8, Math.max(cw, 2), 6);
+    });
+    g.fillStyle = faint; g.globalAlpha = .2; g.fillRect(0, top, W, bh); g.globalAlpha = 1;
+    g.fillStyle = col;
+    a.raster.forEach(([t, n]) => g.fillRect(t * cw - .5, top + n * ch, Math.max(cw, 2.5), Math.max(ch, 2)));
+  }
+}
+function hexRGB(c) {
+  if (!c.startsWith("#")) return [255, 138, 61];
+  const n = parseInt(c.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255];
+}
+function drawAll() { actDrawn = {}; if (last) { renderColumns(last); renderCompare(last); drawTrace(); } }
+window.addEventListener("resize", drawAll);
+
+loadInfo().then(() => { poll(); setInterval(poll, 100); });
+</script>
+</body>
+</html>

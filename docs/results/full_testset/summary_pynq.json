@@ -1,0 +1,85 @@
+{
+  "firmware": "fast",
+  "runs": [
+    {
+      "model": "SNN",
+      "seed": 0,
+      "firmware": "fast",
+      "n_samples": 10000,
+      "test_accuracy": 0.9772,
+      "test_loss": 0.0751324359534539,
+      "pc_float_accuracy": 0.9769,
+      "bit_exact": 1.0,
+      "params": 101770,
+      "ops_per_sample": 336323.5276,
+      "spikes_hidden_per_sample": 382.1038,
+      "spikes_out_per_sample": 22.4315,
+      "latency_ms_per_sample": 57.056534566,
+      "cycles_per_sample": 5705653.4566,
+      "model_bytes": 103024
+    },
+    {
+      "model": "SNN",
+      "seed": 1,
+      "firmware": "fast",
+      "n_samples": 10000,
+      "test_accuracy": 0.9757,
+      "test_loss": 0.07923453328630234,
+      "pc_float_accuracy": 0.9759,
+      "bit_exact": 1.0,
+      "params": 101770,
+      "ops_per_sample": 336892.3116,
+      "spikes_hidden_per_sample": 442.4574,
+      "spikes_out_per_sample": 23.3213,
+      "latency_ms_per_sample": 57.201199954,
+      "cycles_per_sample": 5720119.9954,
+      "model_bytes": 103024
+    }
+  ],
+  "stats": {
+    "test_accuracy": {
+      "mean": 0.97645,
+      "std": 0.001060660171779783
+    },
+    "test_loss": {
+      "mean": 0.07718348461987812,
+      "std": 0.0029006208411443838
+    },
+    "pc_float_accuracy": {
+      "mean": 0.9763999999999999,
+      "std": 0.0007071067811865482
+    },
+    "bit_exact": {
+      "mean": 1.0,
+      "std": 0.0
+    },
+    "params": {
+      "mean": 101770,
+      "std": 0.0
+    },
+    "ops_per_sample": {
+      "mean": 336607.9196,
+      "std": 402.1910234304399
+    },
+    "spikes_hidden_per_sample": {
+      "mean": 412.2806,
+      "std": 42.67643982902044
+    },
+    "spikes_out_per_sample": {
+      "mean": 22.8764,
+      "std": 0.6291836138997907
+    },
+    "latency_ms_per_sample": {
+      "mean": 57.12886726000001,
+      "std": 0.10229387685778296
+    },
+    "cycles_per_sample": {
+      "mean": 5712886.726,
+      "std": 10229.38768577845
+    },
+    "model_bytes": {
+      "mean": 103024,
+      "std": 0.0
+    }
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "checkpoint": "runs\\snn_mnist_seed1.pt",
+  "config": {
+    "model": "SNN",
+    "seed": 1,
+    "epochs": 5,
+    "batch": 64,
+    "lr": 0.001,
+    "hidden": 128,
+    "timesteps": 25,
+    "beta": 0.9
+  },
+  "n_samples": 10000,
+  "timesteps": 25,
+  "n_in": 784,
+  "n_out": 10,
+  "words_per_step": 25,
+  "model_bytes": 103024,
+  "layers": [
+    {
+      "n_in": 784,
+      "n_out": 128,
+      "scale": 0.002004814429545966,
+      "beta": 0.8999999761581421,
+      "threshold": 1.0,
+      "beta_q16": 58982,
+      "thr_q": 499
+    },
+    {
+      "n_in": 128,
+      "n_out": 10,
+      "scale": 0.0017950869216693667,
+      "beta": 0.8999999761581421,
+      "threshold": 1.0,
+      "beta_q16": 58982,
+      "thr_q": 557
+    }
+  ],
+  "pc_test_accuracy_float": 0.9759,
+  "pc_test_accuracy_int": 0.9757,
+  "pc_float_int_agreement": 0.9982
+}

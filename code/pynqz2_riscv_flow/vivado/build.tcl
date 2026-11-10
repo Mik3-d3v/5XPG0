@@ -7,7 +7,7 @@
 
 set part xc7z020clg400-1
 set board tul.com.tw:pynq-z2:part0:1.0
-set projdir ./rvproj
+if {![info exists projdir]} { set projdir ./rvproj }
 
 # ----------------------------------------------------------------------
 # Project
@@ -21,6 +21,16 @@ set_property board_part $board [current_project]
 # Add every RTL source (so a new rtl/*.v is picked up automatically).
 add_files -norecurse [glob ../rtl/*.v]
 add_files -fileset constrs_1 -norecurse ./spike_top.xdc
+
+# build_snn.tcl sets snn_coproc: SoC with the SNN coprocessor (snn_pcpi.v);
+# build_both.tcl also sets mac_coproc: + the ANN MAC coprocessor (mac_pcpi.v)
+if {![info exists snn_coproc]} { set snn_coproc 0 }
+if {![info exists mac_coproc]} { set mac_coproc 0 }
+if {![info exists bit_name]}   { set bit_name spike_top.bit }
+set defines {}
+if {$snn_coproc} { lappend defines SNN_COPROC }
+if {$mac_coproc} { lappend defines MAC_COPROC }
+if {[llength $defines]} { set_property verilog_define $defines [current_fileset] }
 
 # ----------------------------------------------------------------------
 # Block design: PS7 (GP0 master, FCLK0) -> interconnect -> protocol
@@ -111,8 +121,8 @@ wait_on_run impl_1
 
 set bit $projdir/rv.runs/impl_1/spike_top.bit
 if {[file exists $bit]} {
-    file copy -force $bit ./spike_top.bit
-    puts "BITSTREAM: [file normalize ./spike_top.bit]"
+    file copy -force $bit ./$bit_name
+    puts "BITSTREAM: [file normalize ./$bit_name]"
 } else {
     error "bitstream not produced - check runs"
 }

@@ -102,3 +102,25 @@ RISC-V view: `0x0000_0000` BRAM, `0x1000_0000` sysctrl,
 `0x1000_1000` timer, `0x1000_2000` LED, `0x1000_3000` Poisson.
 PS/AXI view: `0x4000_0000` BRAM, `0x4004_0000` syscon.
 See `firmware/board.h` and `host/spike_pynq.py` (they must stay in sync).
+
+## Added by Group 4: SNN and MAC coprocessors
+
+Two custom-instruction units on the PicoRV32 PCPI port. Each is enabled by a Verilog
+define that the build script sets. Without the defines, `rtl/spike_soc.v` builds the
+course SoC unchanged; we checked this by rebuilding and comparing the bitstream and the
+board results.
+
+| | SNN unit | MAC unit |
+|---|---|---|
+| RTL | `rtl/snn_pcpi.v` (define `SNN_COPROC`) | `rtl/mac_pcpi.v` (define `MAC_COPROC`) |
+| instructions | 6, opcode custom-0: LIF update of up to 32 neurons per instruction, 4-weight current update, ... | 5, opcode custom-1: 4 int8 MACs per instruction into 256 accumulators |
+| cost over the SoC | +889 LUTs, +342 FFs, +2 DSPs | +758 LUTs, +188 FFs, 0 DSPs |
+| testbench | `sim/tb_snn_pcpi.v` (vectors from `sim/gen_vectors.py`) | `sim/tb_mac_pcpi.v` (`sim/gen_vectors_mac.py`) |
+
+- **Bitstreams:** `vivado/build_snn.tcl` builds `spike_top_snn.bit` (SNN unit) and
+  `vivado/build_both.tcl` builds `spike_top_both.bit` (both units, timing met at
+  100 MHz). They were built with Vivado 2026.1 on our PC.
+- **Whole-SoC simulation without a board:** `sim/tb_soc.v`, driven by `sim/soc_sim.py`.
+- **Firmware** that uses the units is in `../ann_vs_snn_mnist/pynq/firmware/`.
+- **Design and measurements:** `docs/snn_coprocessor_and_streaming.md` and
+  `docs/mac_coprocessor.md`.
